@@ -81,16 +81,73 @@ namespace Flow.Tests
                 .Sink();
             Assert.Equal(applied, result.Result);
         }
+        
+        [Fact]
+        public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
+        {
+            var result = _builder
+                .For(0)
+                .Apply(x => x + 2)
+                .Apply(x => x.ToString())
+                .Apply(x => x.ToString() + "1")
+                .Finalize(x => x)
+                .Sink();
+            Assert.Equal("21", result.Result);
+        }
 
-        //[Fact]
-        //public void Flow_WhenValidationFails_ExpectSingleErrorInResult()
-        //{
-        //    var result = _builder
-        //        .For(new { Msg = "Mockery" })
-        //        .Validate(x => false, () => new TestingError())
-        //        .Finalize(Predefined.EmptyMethod)
-        //        .Sink();
-        //    Assert.Equal(1, result.Errors.Count);
-        //}
+        [Fact]
+        public void Flow_WhenValidationFails_ExpectSingleErrorInResult()
+        {
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingError())
+                .Finalize(Predefined.EmptyMethod)
+                .Sink();
+            Assert.Equal(1, result.Errors.Count);
+        }
+        
+        [Fact]
+        public void Flow_WhenVerificationFails_ExpectSingleErrorInResult()
+        {
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Apply(x => x)
+                .Verify(x => false, () => new TestingError())
+                .Finalize(Predefined.EmptyMethod)
+                .Sink();
+            Assert.Equal(1, result.Errors.Count);
+        }
+
+
+        [Fact]
+        public void Flow_WhenValidationFails_FinalizeNotExecuted()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFails_FinalizeNotExecuted2()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
     }
 }
