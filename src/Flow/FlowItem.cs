@@ -8,7 +8,7 @@ namespace Flow
         private readonly Action<IFlowItemToken> _action;
 
         public FlowItem(T input)
-            : this(x => x.PushResult(input))
+            : this(token => token.PushResult(input))
         {
         }
 
@@ -17,34 +17,44 @@ namespace Flow
             _action = action;
         }
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> validationTarget, Func<TR, bool> validator, Func<IError> error)
+        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IError> error)
         {
-            throw new NotImplementedException();
-        }
-
-        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IError> error)
-        {
-            void NextAction(IFlowItemToken x)
+            void NextAction(IFlowItemToken token)
             {
-                _action(x);
-                T target = (T)x.CurrentResult;
-                if (!validator(target))
-                {
-                    x.PushError(error());
-                }
+                DecorateValidateVerify(token, transform, new LambdaFilter<TR>(validator, error));
             }
 
             return new FlowItem<T>(NextAction);
         }
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> validationTarget, IFilter<TR> filter)
+        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IError> error)
         {
-            throw new NotImplementedException();
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, x => x, new LambdaFilter<T>(validator, error));
+            }
+
+            return new FlowItem<T>(NextAction);
+        }
+
+        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter)
+        {
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, transform, filter);
+            }
+
+            return new FlowItem<T>(NextAction);
         }
 
         public IBeginFlow<T> Validate(IFilter<T> filter)
         {
-            throw new NotImplementedException();
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, x => x, filter);
+            }
+
+            return new FlowItem<T>(NextAction);
         }
 
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply)
@@ -59,21 +69,21 @@ namespace Flow
             return new FlowItem<TR>(NextAction);
         }
 
-        public IValidated<T> Verify<TR>(Func<T, TR> verificationTarget, Func<TR, bool> check, Func<IError> error)
+        public IValidated<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error)
         {
-            throw new NotImplementedException();
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, transform, new LambdaFilter<TR>(check, error));
+            }
+
+            return new FlowItem<T>(NextAction);
         }
 
         public IValidated<T> Verify(Func<T, bool> check, Func<IError> error)
         {
-            void NextAction(IFlowItemToken x)
+            void NextAction(IFlowItemToken token)
             {
-                _action(x);
-                T target = (T)x.CurrentResult;
-                if (!check(target))
-                {
-                    x.PushError(error());
-                }
+                DecorateValidateVerify(token, x => x, new LambdaFilter<T>(check, error));
             }
 
             return new FlowItem<T>(NextAction);
@@ -81,24 +91,29 @@ namespace Flow
 
         public IValidated<T> Verify(IFilter<T> filter)
         {
-            throw new NotImplementedException();
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, x => x, filter);
+            }
+
+            return new FlowItem<T>(NextAction);
         }
 
-        public IValidated<T> Verify<TR>(Func<T, TR> verificationTarget, IFilter<TR> filter)
+        public IValidated<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter)
         {
-            throw new NotImplementedException();
+            void NextAction(IFlowItemToken token)
+            {
+                DecorateValidateVerify(token, transform, filter);
+            }
+
+            return new FlowItem<T>(NextAction);
         }
 
         public IPipeline Finalize(Action<T> execution)
         {
-            void NextAction(IFlowItemToken x)
+            void NextAction(IFlowItemToken token)
             {
-                _action(x);
-                if (!x.Errors.Any())
-                {
-                    T target = (T)x.CurrentResult;
-                    execution(target);
-                }
+                DecorateExecution(token, argument => execution(argument));
             }
 
             return new Pipeline(NextAction);
@@ -106,17 +121,31 @@ namespace Flow
 
         public IPipeline<TR> Finalize<TR>(Func<T, TR> execution)
         {
-            void NextAction(IFlowItemToken x)
+            void NextAction(IFlowItemToken token)
             {
-                _action(x);
-                if (!x.Errors.Any())
-                {
-                    T target = (T)x.CurrentResult;
-                    x.PushResult(execution(target));
-                }
+                DecorateExecution(token, argument => token.PushResult(execution(argument)));
             }
 
             return new Pipeline<TR>(NextAction);
+        }
+
+        public void DecorateExecution(IFlowItemToken token, Action<T> target)
+        {
+            _action(token);
+            if (!token.Errors.Any())
+            {
+                target((T)token.CurrentResult);
+            }
+        }
+
+        public void DecorateValidateVerify<TK>(IFlowItemToken token, Func<T, TK> transform, IFilter<TK> filter)
+        {
+            _action(token);
+            TK target = transform((T)token.CurrentResult);
+            if (!filter.Check(target, out IError error))
+            {
+                token.PushError(error);
+            }
         }
     }
 }
