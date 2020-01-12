@@ -5,6 +5,20 @@ namespace Flow.Tests
 {
     public class StandardFlowTests
     {
+        public class TestingInput
+        {
+            
+        }
+
+        public class TestingFilter : IFilter<TestingInput>
+        {
+            public bool Check(TestingInput target, out IError error)
+            {
+                error = new TestingError();
+                return false;
+            }
+        }
+
         private readonly StandardPipelineBuilder _builder;
 
         public StandardFlowTests()
@@ -120,7 +134,7 @@ namespace Flow.Tests
 
 
         [Fact]
-        public void Flow_WhenValidationFails_FinalizeNotExecuted()
+        public void Flow_WhenValidationFails_PipelineStopped()
         {
             bool executed = false;
             var result = _builder
@@ -135,12 +149,127 @@ namespace Flow.Tests
         }
         
         [Fact]
-        public void Flow_WhenValidationFails_FinalizeNotExecuted2()
+        public void Flow_WhenValidationFails_PipelineStopped2()
         {
             bool executed = false;
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingError())
+                .Validate(x => x, x => false, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFails_PipelineStopped3()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => new TestingInput(), new TestingFilter())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFails_PipelineStopped4()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new TestingInput())
+                .Validate(new TestingFilter())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+
+        [Fact]
+        public void Flow_WhenValidationChangesTarget_ExpectFinalizeExecuted()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Prop = true })
+                .Validate(x => x.Prop, x => x, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                })
+                .Sink();
+            Assert.True(executed);
+        }
+
+        [Fact]
+        public void Flow_WhenVerificationFails_PipelineStopped()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Apply(x => x)
+                .Verify(x => false, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenVerificationFails_PipelineStopped2()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Apply(x => x)
+                .Verify(x => x.Msg, x => false, () => new TestingError())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenVerificationFails_PipelineStopped3()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Apply(x => x)
+                .Verify(x => new TestingInput(), new TestingFilter())
+                .Finalize(x =>
+                {
+                    executed = true;
+                    return x;
+                })
+                .Sink();
+            Assert.False(executed);
+        }
+        
+        [Fact]
+        public void Flow_WhenVerificationFails_PipelineStopped4()
+        {
+            bool executed = false;
+            var result = _builder
+                .For(new TestingInput())
+                .Apply(x => x)
+                .Verify(new TestingFilter())
                 .Finalize(x =>
                 {
                     executed = true;
