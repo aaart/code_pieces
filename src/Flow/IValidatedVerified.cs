@@ -1,6 +1,6 @@
 ﻿namespace Flow
 {
-    public interface IValidatedVerified<T> : IValidated<T>, IVerificationReady<T>
+    public interface IValidatedVerified<out T> : IValidated<T>, IVerificationReady<T>, IEventPublisher<T>
     {
         
     }

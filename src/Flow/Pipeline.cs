@@ -4,16 +4,16 @@ namespace Flow
 {
     public class Pipeline : IPipeline
     {
-        protected Action<IFlowItemToken> Action { get; }
+        protected Action<IFlowItemState> Action { get; }
 
-        internal Pipeline(Action<IFlowItemToken> action)
+        internal Pipeline(Action<IFlowItemState> action)
         {
             Action = action;
         }
 
         public IPipelineResult Sink()
         {
-            var token = new FlowItemTokenStack();
+            var token = new FlowItemStateStack();
             Action(token);
             var result = new PipelineResult();
             result.Errors.AddRange(token.Errors);
@@ -23,7 +23,7 @@ namespace Flow
 
     public class Pipeline<T> : Pipeline, IPipeline<T>
     {
-        internal Pipeline(Action<IFlowItemToken> action)
+        internal Pipeline(Action<IFlowItemState> action)
             : base(action)
         {
         }
@@ -35,7 +35,7 @@ namespace Flow
 
         public new IPipelineResult<T> Sink()
         {
-            var pass = new FlowItemTokenStack();
+            var pass = new FlowItemStateStack();
             Action(pass);
             return new PipelineResult<T> { Result = (T)pass.CurrentResult };
         }
