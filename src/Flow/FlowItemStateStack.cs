@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public class FlowItemTokenStack : IFlowItemToken
+    public class FlowItemStateStack : IFlowItemState
     {
         private readonly Stack _results = new Stack();
         private readonly Stack<IError> _errors = new Stack<IError>();
+        private readonly StandardEventReceiver _standardEventReceiver = new StandardEventReceiver();
 
         public object CurrentResult => _results.Peek();
         public void PushResult(object o) => _results.Push(o);
@@ -16,5 +17,6 @@ namespace Flow
         public void PushError(IError error) => _errors.Push(error);
 
         public IEnumerable<IError> Errors => _errors;
+        public IEventReceiver EventReceiver => _standardEventReceiver;
     }
 }

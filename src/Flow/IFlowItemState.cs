@@ -2,7 +2,7 @@
 
 namespace Flow
 {
-    public interface IFlowItemToken
+    public interface IFlowItemState
     {
         object CurrentResult { get; }
         void PushResult(object o);
@@ -12,5 +12,7 @@ namespace Flow
         void PushError(IError error);
 
         IEnumerable<IError> Errors { get; }
+
+        IEventReceiver EventReceiver { get; }
     }
 }
