@@ -5,165 +5,81 @@ namespace Flow
 {
     public class FlowItem<T> : IBeginFlow<T>, IValidatedVerified<T>
     {
-        private readonly Action<IFlowItemState> _action;
+        private readonly Func<IFlowItemState> _method;
 
-        public FlowItem(T input)
-            : this(state => state.PushResult(input))
-        {
-        }
-
-        private FlowItem(Action<IFlowItemState> action)
-        {
-            _action = action;
-        }
-
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IError> error)
-        {
-            void NextAction(IFlowItemState state)
+        public FlowItem(T input, IFlowItemState state)
+            : this(() =>
             {
-                DecorateValidateVerify(state, transform, new LambdaFilter<TR>(validator, error));
-            }
-
-            return Clone<T>(NextAction);
+                state.PushResult(input);
+                return state;
+            })
+        {
         }
 
-        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IError> error)
+        private FlowItem(Func<IFlowItemState> method)
         {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, x => x, new LambdaFilter<T>(validator, error));
-            }
-
-            return Clone<T>(NextAction);
+            _method = method;
         }
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter)
+        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IError> error) => 
+            Clone<T>(() => Decorate(transform, new LambdaFilter<TR>(validator, error)));
+
+        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IError> error) => 
+            Clone<T>(() => Decorate(x => x, new LambdaFilter<T>(validator, error)));
+
+        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
+            Clone<T>(() => Decorate(transform, filter));
+
+        public IBeginFlow<T> Validate(IFilter<T> filter) => 
+            Clone<T>(() => Decorate(x => x, filter));
+
+        public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
+            Clone<TR>(() => Decorate((argument, state) => state.PushResult(apply((T)state.CurrentResult))));
+
+        public IValidated<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error) => 
+            Clone<T>(() => Decorate(transform, new LambdaFilter<TR>(check, error)));
+
+        public IValidated<T> Verify(Func<T, bool> check, Func<IError> error) => 
+            Clone<T>(() => Decorate(x => x, new LambdaFilter<T>(check, error)));
+
+        public IValidated<T> Verify(IFilter<T> filter) => 
+            Clone<T>(() => Decorate(x => x, filter));
+
+        public IValidated<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
+            Clone<T>(() => Decorate(transform, filter));
+
+        public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
+            Clone<T>(() => Decorate((argument, state) => state.EventReceiver.Receive(publishEvent((T)state.CurrentResult))));
+
+        public IPipeline Finalize(Action<T> execution) => 
+            new Pipeline(() => Decorate((argument, state) => execution(argument)));
+
+        public IPipeline<TR> Finalize<TR>(Func<T, TR> execution) => 
+            new Pipeline<TR>(() => Decorate((argument, state) => state.PushResult(execution(argument))));
+
+        public IFlowItemState Decorate(Action<T, IFlowItemState> target)
         {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, transform, filter);
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IBeginFlow<T> Validate(IFilter<T> filter)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, x => x, filter);
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                _action(state);
-                T target = (T)state.CurrentResult;
-                state.PushResult(apply(target));
-            }
-
-            return Clone<TR>(NextAction);
-        }
-
-        public IValidated<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, transform, new LambdaFilter<TR>(check, error));
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IValidated<T> Verify(Func<T, bool> check, Func<IError> error)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, x => x, new LambdaFilter<T>(check, error));
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IValidated<T> Verify(IFilter<T> filter)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, x => x, filter);
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IValidated<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateValidateVerify(state, transform, filter);
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent)
-            where TE : IEvent
-        {
-            void NextAction(IFlowItemState state)
-            {
-                _action(state);
-                T target = (T)state.CurrentResult;
-                state.EventReceiver.Receive(publishEvent(target));
-            }
-
-            return Clone<T>(NextAction);
-        }
-
-        public IPipeline Finalize(Action<T> execution)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateExecution(state, argument => execution(argument));
-            }
-
-            return new Pipeline(NextAction);
-        }
-
-        public IPipeline<TR> Finalize<TR>(Func<T, TR> execution)
-        {
-            void NextAction(IFlowItemState state)
-            {
-                DecorateExecution(state, argument => state.PushResult(execution(argument)));
-            }
-
-            return new Pipeline<TR>(NextAction);
-        }
-
-        public void DecorateExecution(IFlowItemState state, Action<T> target)
-        {
-            _action(state);
+            var state = _method();
             if (!state.Errors.Any())
             {
-                target((T)state.CurrentResult);
+                target((T)state.CurrentResult, state);
             }
+
+            return state;
         }
 
-        public void DecorateValidateVerify<TK>(IFlowItemState state, Func<T, TK> transform, IFilter<TK> filter)
+        public IFlowItemState Decorate<TK>(Func<T, TK> transform, IFilter<TK> filter)
         {
-            _action(state);
+            var state = _method();
             TK target = transform((T)state.CurrentResult);
             if (!filter.Check(target, out IError error))
             {
                 state.PushError(error);
             }
+
+            return state;
         }
 
-        private FlowItem<TR> Clone<TR>(Action<IFlowItemState> action)
-        {
-            return new FlowItem<TR>(action);
-        }
+        private FlowItem<TR> Clone<TR>(Func<IFlowItemState> method) => new FlowItem<TR>(method);
     }
 }
