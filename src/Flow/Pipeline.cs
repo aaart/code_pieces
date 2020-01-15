@@ -21,6 +21,7 @@ namespace Flow
             var result = new T();
             result.Errors.AddRange(state.Errors);
             setup?.Invoke(result, state);
+            state.EventReceiver.Dispose();
             return result;
         }
     }
