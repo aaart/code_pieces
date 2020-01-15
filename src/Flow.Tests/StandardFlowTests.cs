@@ -121,6 +121,28 @@ namespace Flow.Tests
         }
         
         [Fact]
+        public void Flow_WhenValidationFails_ExpectSingleErrorInResult2()
+        {
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingError())
+                .Finalize(x => false)
+                .Sink();
+            Assert.Equal(1, result.Errors.Count);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFails_ExpectSingleErrorInResult3()
+        {
+            var result = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingError())
+                .Finalize(x => false)
+                .Sink(x => 1);
+            Assert.Equal(1, result.Errors.Count);
+        }
+        
+        [Fact]
         public void Flow_WhenVerificationFails_ExpectSingleErrorInResult()
         {
             var result = _builder

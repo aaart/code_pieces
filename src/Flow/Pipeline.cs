@@ -1,43 +1,47 @@
 ﻿using System;
+using System.Linq;
 
 namespace Flow
 {
     public class Pipeline : IPipeline
     {
-        protected Action<IFlowItemState> Action { get; }
+        protected Func<IFlowItemState> Method { get; }
 
-        internal Pipeline(Action<IFlowItemState> action)
+        internal Pipeline(Func<IFlowItemState> method)
         {
-            Action = action;
+            Method = method;
         }
 
-        public IPipelineResult Sink()
+        public IPipelineResult Sink() => CreateResult<PipelineResult>();
+
+        protected T CreateResult<T>(Action<T, IFlowItemState> setup = null)
+            where T : PipelineResult, new()
         {
-            var token = new FlowItemStateStack();
-            Action(token);
-            var result = new PipelineResult();
-            result.Errors.AddRange(token.Errors);
+            var state = Method();
+            var result = new T();
+            result.Errors.AddRange(state.Errors);
+            setup?.Invoke(result, state);
             return result;
         }
     }
 
     public class Pipeline<T> : Pipeline, IPipeline<T>
     {
-        internal Pipeline(Action<IFlowItemState> action)
-            : base(action)
+        internal Pipeline(Func<IFlowItemState> method)
+            : base(method)
         {
         }
 
-        public IPipelineResult<TR> Sink<TR>(Func<T, TR> projection)
-        {
-            throw new NotImplementedException();
-        }
+        public IPipelineResult<TR> Sink<TR>(Func<T, TR> projection) =>
+            CreateResult<PipelineResult<TR>>((result, state) =>
+            {
+                if (!state.Errors.Any())
+                {
+                    result.Result = projection((T)state.CurrentResult);
+                }
+            });
 
-        public new IPipelineResult<T> Sink()
-        {
-            var pass = new FlowItemStateStack();
-            Action(pass);
-            return new PipelineResult<T> { Result = (T)pass.CurrentResult };
-        }
+        public new IPipelineResult<T> Sink() => Sink(x => x);
+
     }
 }
