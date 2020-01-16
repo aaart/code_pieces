@@ -5,18 +5,9 @@ namespace Flow
 {
     public class FlowItem<T> : IBeginFlow<T>, IValidatedVerified<T>
     {
-        private readonly Func<IFlowItemState> _method;
-
-        public FlowItem(T input, IFlowItemState state)
-            : this(() =>
-            {
-                state.PushResult(input);
-                return state;
-            })
-        {
-        }
-
-        private FlowItem(Func<IFlowItemState> method)
+        private readonly Func<IState> _method;
+        
+        internal FlowItem(Func<IState> method)
         {
             _method = method;
         }
@@ -57,18 +48,18 @@ namespace Flow
         public IPipeline<TR> Finalize<TR>(Func<T, TR> execution) => 
             new Pipeline<TR>(() => Decorate((argument, state) => state.PushResult(execution(argument))));
 
-        public IFlowItemState Decorate(Action<T, IFlowItemState> target)
+        public IState Decorate(Action<T, IState> target)
         {
             var state = _method();
             if (!state.Errors.Any())
             {
-                target((T)state.CurrentResult<T>(), state);
+                target(state.CurrentResult<T>(), state);
             }
 
             return state;
         }
 
-        public IFlowItemState Decorate<TK>(Func<T, TK> transform, IFilter<TK> filter)
+        public IState Decorate<TK>(Func<T, TK> transform, IFilter<TK> filter)
         {
             var state = _method();
             TK target = transform(state.CurrentResult<T>());
@@ -80,6 +71,6 @@ namespace Flow
             return state;
         }
 
-        private FlowItem<TR> Clone<TR>(Func<IFlowItemState> method) => new FlowItem<TR>(method);
+        private FlowItem<TR> Clone<TR>(Func<IState> method) => new FlowItem<TR>(method);
     }
 }

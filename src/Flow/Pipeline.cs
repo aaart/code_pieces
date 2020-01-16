@@ -5,16 +5,16 @@ namespace Flow
 {
     public class Pipeline : IPipeline
     {
-        protected Func<IFlowItemState> Method { get; }
+        protected Func<IState> Method { get; }
 
-        internal Pipeline(Func<IFlowItemState> method)
+        internal Pipeline(Func<IState> method)
         {
             Method = method;
         }
 
         public IPipelineResult Sink() => CreateResult<PipelineResult>();
 
-        protected T CreateResult<T>(Action<T, IFlowItemState> setup = null)
+        protected T CreateResult<T>(Action<T, IState> setup = null)
             where T : PipelineResult, new()
         {
             var state = Method();
@@ -28,7 +28,7 @@ namespace Flow
 
     public class Pipeline<T> : Pipeline, IPipeline<T>
     {
-        internal Pipeline(Func<IFlowItemState> method)
+        internal Pipeline(Func<IState> method)
             : base(method)
         {
         }
