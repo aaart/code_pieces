@@ -105,8 +105,8 @@ namespace Flow.Tests
                     return x;
                 })
                 .Finalize(x => count + 1)
-                .Sink();
-            Assert.Equal(7, finalized.Value);
+                .Sink(x => x + 1);
+            Assert.Equal(8, finalized.Value);
         }
 
         [Fact]
