@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Flow
 {
     public class State : IState
     {
+        protected IEventReceiver EventReceiver { get; private set; }
         private readonly List<IError> _errors = new List<IError>();
 
 
@@ -15,16 +15,20 @@ namespace Flow
 
         public State(IEnumerable<IError> errors, IEventReceiver eventReceiver)
         {
-            _errors.AddRange(errors);
             EventReceiver = eventReceiver;
+            _errors.AddRange(errors);
         }
+
+        public IEnumerable<IError> Errors => _errors;
 
         public IState Skip() => this;
 
         public void PublishError(IError error) => _errors.Add(error);
 
-        public IEnumerable<IError> Errors => _errors;
-        public IEventReceiver EventReceiver { get; }
+        public void Receive(IEvent @event)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class State<T> : State, IState<T>

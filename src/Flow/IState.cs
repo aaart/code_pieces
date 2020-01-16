@@ -8,7 +8,7 @@ namespace Flow
         IState Skip();
         void PublishError(IError error);
         IEnumerable<IError> Errors { get; }
-        IEventReceiver EventReceiver { get; }
+        void Receive(IEvent @event);
     }
 
     public interface IState<out T> : IState

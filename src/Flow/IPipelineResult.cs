@@ -10,6 +10,6 @@ namespace Flow
 
     public interface IPipelineResult<out T> : IPipelineResult
     {
-        T Result { get; }
+        T Value { get; }
     }
 }
