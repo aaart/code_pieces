@@ -9,7 +9,7 @@ namespace Flow
         private readonly Stack<IError> _errors = new Stack<IError>();
         private readonly StandardEventReceiver _standardEventReceiver = new StandardEventReceiver();
 
-        public object CurrentResult => _results.Peek();
+        public T CurrentResult<T>() => (T)_results.Peek();
         public void PushResult(object o) => _results.Push(o);
 
         public IError CurrentError => _errors.Peek();
