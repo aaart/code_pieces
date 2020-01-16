@@ -34,7 +34,7 @@ namespace Flow
                 }
             });
 
-        public new IPipelineResult<T> Sink() => Sink(x => x);
+        public IPipelineResult<T> Sink() => Sink(x => x);
 
         IPipelineResult IPipeline.Sink()
         {
