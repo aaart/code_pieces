@@ -5,44 +5,40 @@ namespace Flow
 {
     public class Pipeline : IPipeline
     {
-        protected Func<IState> Method { get; }
-
+        private readonly Func<IState> _method;
         internal Pipeline(Func<IState> method)
         {
-            Method = method;
+            _method = method;
         }
 
-        public IPipelineResult Sink() => CreateResult<PipelineResult>();
+        public IPipelineResult Sink() => PipelineResult.CreateResult<PipelineResult, IState>(_method());
 
-        protected T CreateResult<T>(Action<T, IState> setup = null)
-            where T : PipelineResult, new()
-        {
-            var state = Method();
-            var result = new T();
-            result.Errors.AddRange(state.Errors);
-            setup?.Invoke(result, state);
-            state.EventReceiver.Dispose();
-            return result;
-        }
+        
     }
 
-    public class Pipeline<T> : Pipeline, IPipeline<T>
+    public class Pipeline<T> : IPipeline<T>
     {
-        internal Pipeline(Func<IState> method)
-            : base(method)
+        private readonly Func<IState<T>> _method;
+        
+        internal Pipeline(Func<IState<T>> method)
         {
+            _method = method;
         }
 
         public IPipelineResult<TR> Sink<TR>(Func<T, TR> projection) =>
-            CreateResult<PipelineResult<TR>>((result, state) =>
+            PipelineResult.CreateResult<PipelineResult<TR>, IState<T>>(_method(), (result, state) =>
             {
                 if (!state.Errors.Any())
                 {
-                    result.Result = projection(state.CurrentResult<T>());
+                    result.Result = projection(state.Result);
                 }
             });
 
         public new IPipelineResult<T> Sink() => Sink(x => x);
 
+        IPipelineResult IPipeline.Sink()
+        {
+            return Sink();
+        }
     }
 }

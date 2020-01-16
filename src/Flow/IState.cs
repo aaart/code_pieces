@@ -2,17 +2,20 @@
 
 namespace Flow
 {
+
     public interface IState
     {
-        T CurrentResult<T>();
-        void PushResult(object o);
-
-        IError CurrentError { get; }
-
-        void PushError(IError error);
-
+        IState Skip();
+        void PublishError(IError error);
         IEnumerable<IError> Errors { get; }
-
         IEventReceiver EventReceiver { get; }
+    }
+
+    public interface IState<out T> : IState
+    {
+        IState<TR> Clone<TR>(TR result);
+        new IState<TR> Skip<TR>();
+        IState ToVoid();
+        T Result { get; }
     }
 }
