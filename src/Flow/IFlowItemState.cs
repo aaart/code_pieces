@@ -4,7 +4,7 @@ namespace Flow
 {
     public interface IFlowItemState
     {
-        object CurrentResult { get; }
+        T CurrentResult<T>();
         void PushResult(object o);
 
         IError CurrentError { get; }

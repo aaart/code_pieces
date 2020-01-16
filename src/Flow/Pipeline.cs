@@ -38,7 +38,7 @@ namespace Flow
             {
                 if (!state.Errors.Any())
                 {
-                    result.Result = projection((T)state.CurrentResult);
+                    result.Result = projection(state.CurrentResult<T>());
                 }
             });
 

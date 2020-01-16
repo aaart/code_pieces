@@ -34,7 +34,7 @@ namespace Flow
             Clone<T>(() => Decorate(x => x, filter));
 
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
-            Clone<TR>(() => Decorate((argument, state) => state.PushResult(apply((T)state.CurrentResult))));
+            Clone<TR>(() => Decorate((argument, state) => state.PushResult(apply(state.CurrentResult<T>()))));
 
         public IValidated<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error) => 
             Clone<T>(() => Decorate(transform, new LambdaFilter<TR>(check, error)));
@@ -49,7 +49,7 @@ namespace Flow
             Clone<T>(() => Decorate(transform, filter));
 
         public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
-            Clone<T>(() => Decorate((argument, state) => state.EventReceiver.Receive(publishEvent((T)state.CurrentResult))));
+            Clone<T>(() => Decorate((argument, state) => state.EventReceiver.Receive(publishEvent(state.CurrentResult<T>()))));
 
         public IPipeline Finalize(Action<T> execution) => 
             new Pipeline(() => Decorate((argument, state) => execution(argument)));
@@ -62,7 +62,7 @@ namespace Flow
             var state = _method();
             if (!state.Errors.Any())
             {
-                target((T)state.CurrentResult, state);
+                target((T)state.CurrentResult<T>(), state);
             }
 
             return state;
@@ -71,7 +71,7 @@ namespace Flow
         public IFlowItemState Decorate<TK>(Func<T, TK> transform, IFilter<TK> filter)
         {
             var state = _method();
-            TK target = transform((T)state.CurrentResult);
+            TK target = transform(state.CurrentResult<T>());
             if (!filter.Check(target, out IError error))
             {
                 state.PushError(error);
