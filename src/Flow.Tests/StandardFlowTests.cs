@@ -47,11 +47,6 @@ namespace Flow.Tests
                     count++;
                     return true;
                 }, () => new TestingError())
-                .Apply(x =>
-                {
-                    count++;
-                    return x;
-                })
                 .Verify(x =>
                 {
                     count++;
@@ -61,6 +56,11 @@ namespace Flow.Tests
                     count++;
                     return true;
                 }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
                 .Finalize(x =>
                 {
                     count++;
@@ -90,11 +90,6 @@ namespace Flow.Tests
                     count++;
                     return true;
                 }, () => new TestingError())
-                .Apply(x =>
-                {
-                    count++;
-                    return x;
-                })
                 .Verify(x =>
                 {
                     count++;
@@ -104,6 +99,11 @@ namespace Flow.Tests
                     count++;
                     return true;
                 }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
                 .Finalize(x => count + 1)
                 .Sink();
             Assert.Equal(7, finalized.Value);

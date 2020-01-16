@@ -27,16 +27,16 @@ namespace Flow
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
             Clone(() => Decorate((argument, state) => state.Clone(apply(state.Result))));
 
-        public IValidated<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error) => 
+        public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error) => 
             Clone(() => Decorate(transform, new LambdaFilter<TR>(check, error)));
-
-        public IValidated<T> Verify(Func<T, bool> check, Func<IError> error) => 
+        
+        public IValidatedVerified<T> Verify(Func<T, bool> check, Func<IError> error) => 
             Clone(() => Decorate(x => x, new LambdaFilter<T>(check, error)));
 
-        public IValidated<T> Verify(IFilter<T> filter) => 
+        public IValidatedVerified<T> Verify(IFilter<T> filter) => 
             Clone(() => Decorate(x => x, filter));
 
-        public IValidated<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
+        public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
             Clone(() => Decorate(transform, filter));
 
         public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
