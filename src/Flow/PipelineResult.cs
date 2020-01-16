@@ -13,7 +13,6 @@ namespace Flow
             var result = new T();
             result.Errors.AddRange(state.Errors);
             setup?.Invoke(result, state);
-            state.EventReceiver.Dispose();
             return result;
         }
 
@@ -30,6 +29,6 @@ namespace Flow
     }
     public class PipelineResult<T> : PipelineResult, IPipelineResult<T>
     {
-        public T Result { get; set; }
+        public T Value { get; set; }
     }
 }

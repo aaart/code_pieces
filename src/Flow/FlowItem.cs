@@ -42,7 +42,7 @@ namespace Flow
         public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
             Clone(() => Decorate((argument, state) =>
             {
-                state.EventReceiver.Receive(publishEvent(state.Result));
+                state.Receive(publishEvent(state.Result));
                 return state;
             }));
 
@@ -63,7 +63,6 @@ namespace Flow
             {
                 return target(state.Result, state);
             }
-
             return state.Skip();
         }
         
@@ -85,7 +84,6 @@ namespace Flow
             {
                 state.PublishError(error);
             }
-
             return state;
         }
 

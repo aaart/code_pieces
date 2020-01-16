@@ -30,7 +30,7 @@ namespace Flow
             {
                 if (!state.Errors.Any())
                 {
-                    result.Result = projection(state.Result);
+                    result.Value = projection(state.Result);
                 }
             });
 

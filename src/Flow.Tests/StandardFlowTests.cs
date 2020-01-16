@@ -7,7 +7,7 @@ namespace Flow.Tests
     {
         public class TestingInput
         {
-            
+
         }
 
         public class TestingFilter : IFilter<TestingInput>
@@ -24,6 +24,89 @@ namespace Flow.Tests
         public StandardFlowTests()
         {
             _builder = new StandardPipelineBuilder();
+        }
+
+        [Fact]
+        public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount()
+        {
+            int count = 0;
+            var finalized = _builder
+                .For(new { })
+                .Validate(x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
+                .Verify(x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
+                .Verify(x =>
+                {
+                    count++;
+                    return new { prop = x };
+                }, x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Finalize(x =>
+                {
+                    count++;
+                })
+                .Sink();
+            Assert.Equal(7, count);
+        }
+
+        [Fact]
+        public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
+        {
+            int count = 0;
+            var finalized = _builder
+                .For(new { })
+                .Validate(x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
+                .Verify(x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Apply(x =>
+                {
+                    count++;
+                    return x;
+                })
+                .Verify(x =>
+                {
+                    count++;
+                    return new { prop = x };
+                }, x =>
+                {
+                    count++;
+                    return true;
+                }, () => new TestingError())
+                .Finalize(x => count + 1)
+                .Sink();
+            Assert.Equal(7, finalized.Value);
         }
 
         [Fact]
@@ -44,9 +127,9 @@ namespace Flow.Tests
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, result.Result);
+            Assert.Equal(input, result.Value);
         }
-        
+
         [Fact]
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
@@ -55,7 +138,7 @@ namespace Flow.Tests
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, result.Result);
+            Assert.Equal(input, result.Value);
         }
 
         [Fact]
@@ -67,9 +150,9 @@ namespace Flow.Tests
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Result);
+            Assert.Equal(applied, result.Value);
         }
-        
+
         [Fact]
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
@@ -80,7 +163,7 @@ namespace Flow.Tests
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Result);
+            Assert.Equal(applied, result.Value);
         }
 
         [Fact]
@@ -93,9 +176,9 @@ namespace Flow.Tests
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Result);
+            Assert.Equal(applied, result.Value);
         }
-        
+
         [Fact]
         public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
         {
@@ -106,7 +189,7 @@ namespace Flow.Tests
                 .Apply(x => x.ToString() + "1")
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal("21", result.Result);
+            Assert.Equal("21", result.Value);
         }
 
         [Fact]
@@ -119,7 +202,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.Equal(1, result.Errors.Count);
         }
-        
+
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult2()
         {
@@ -130,7 +213,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.Equal(1, result.Errors.Count);
         }
-        
+
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult3()
         {
@@ -141,7 +224,7 @@ namespace Flow.Tests
                 .Sink(x => 1);
             Assert.Equal(1, result.Errors.Count);
         }
-        
+
         [Fact]
         public void Flow_WhenVerificationFails_ExpectSingleErrorInResult()
         {
@@ -169,7 +252,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenValidationFails_PipelineStopped2()
         {
@@ -185,7 +268,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenValidationFails_PipelineStopped3()
         {
@@ -201,7 +284,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenValidationFails_PipelineStopped4()
         {
@@ -249,7 +332,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenVerificationFails_PipelineStopped2()
         {
@@ -266,7 +349,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenVerificationFails_PipelineStopped3()
         {
@@ -283,7 +366,7 @@ namespace Flow.Tests
                 .Sink();
             Assert.False(executed);
         }
-        
+
         [Fact]
         public void Flow_WhenVerificationFails_PipelineStopped4()
         {
