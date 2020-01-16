@@ -2,7 +2,7 @@
 
 namespace Flow
 {
-    public interface IFlowItemState
+    public interface IState
     {
         T CurrentResult<T>();
         void PushResult(object o);
