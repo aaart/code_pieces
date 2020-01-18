@@ -46,7 +46,7 @@ namespace Flow
 
         public T Result { get; }
         
-        public IState<TR> Clone<TR>(TR result)
+        public IState<TR> Next<TR>(TR result)
         {
             return new State<TR>(result, Errors, EventReceiver);
         }
@@ -56,7 +56,7 @@ namespace Flow
             return new State<TR>(default, Errors, EventReceiver);
         }
 
-        public IState ToVoid()
+        public IState Next()
         {
             return new State(Errors, EventReceiver);
         }

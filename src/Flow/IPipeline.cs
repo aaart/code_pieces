@@ -10,6 +10,5 @@ namespace Flow
     public interface IPipeline<out T> : IPipeline
     {
         new IPipelineResult<T> Sink();
-        IPipelineResult<TR> Sink<TR>(Func<T, TR> projection);
     }
 }
