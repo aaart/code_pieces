@@ -16,25 +16,26 @@ namespace Flow
         
     }
 
-    public class Pipeline<T> : IPipeline<T>
+    public class Pipeline<T> : IProjectablePipeline<T>
     {
         private readonly Func<IState<T>> _method;
-        
+
         internal Pipeline(Func<IState<T>> method)
         {
             _method = method;
         }
 
-        public IPipelineResult<TR> Sink<TR>(Func<T, TR> projection) =>
-            PipelineResult.CreateResult<PipelineResult<TR>, IState<T>>(_method(), (result, state) =>
+        public IPipeline<TR> Project<TR>(Func<T, TR> projection) => 
+            new Pipeline<TR>(() => _method.Decorate((argument, state) => state.Next(projection(state.Result))));
+
+        public IPipelineResult<T> Sink() =>
+            PipelineResult.CreateResult<PipelineResult<T>, IState<T>>(_method(), (result, state) =>
             {
                 if (!state.Errors.Any())
                 {
-                    result.Value = projection(state.Result);
+                    result.Value = state.Result;
                 }
             });
-
-        public IPipelineResult<T> Sink() => Sink(x => x);
 
         IPipelineResult IPipeline.Sink()
         {

@@ -13,9 +13,10 @@ namespace Flow
 
     public interface IState<out T> : IState
     {
-        IState<TR> Clone<TR>(TR result);
+        IState Next();
+        IState<TR> Next<TR>(TR result);
         new IState<TR> Skip<TR>();
-        IState ToVoid();
+        
         T Result { get; }
     }
 }

@@ -105,7 +105,8 @@ namespace Flow.Tests
                     return x;
                 })
                 .Finalize(x => count + 1)
-                .Sink(x => x + 1);
+                .Project(x => x + 1)
+                .Sink();
             Assert.Equal(8, finalized.Value);
         }
 
@@ -221,7 +222,8 @@ namespace Flow.Tests
                 .For(new { Msg = "Mockery" })
                 .Validate(x => false, () => new TestingError())
                 .Finalize(x => false)
-                .Sink(x => 1);
+                .Project(x => 1)
+                .Sink();
             Assert.Equal(1, result.Errors.Count);
         }
 
