@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace Flow
 {
-    public class FlowItem<T> : IBeginFlow<T>, IValidatedVerified<T>
+    public class Step<T> : IBeginFlow<T>, IValidatedVerified<T>
     {
         private readonly Func<IState<T>> _method;
         
-        internal FlowItem(Func<IState<T>> method)
+        internal Step(Func<IState<T>> method)
         {
             _method = method;
         }
@@ -61,6 +61,6 @@ namespace Flow
             }));
 
         
-        private FlowItem<TR> Clone<TR>(Func<IState<TR>> method) => new FlowItem<TR>(method);
+        private Step<TR> Clone<TR>(Func<IState<TR>> method) => new Step<TR>(method);
     }
 }
