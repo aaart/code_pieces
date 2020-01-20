@@ -7,9 +7,9 @@ namespace Flow.Tests
 {
     public class StateTests
     {
-        public class TestingState : State<int>
+        public class TestingState : State<int, StandardEventReceiver>
         {
-            public TestingState(Action<IEnumerable<IError>, IEventReceiver> onDisposing)
+            public TestingState(Action<IEnumerable<IError>, StandardEventReceiver> onDisposing)
                 : base(0, new List<IError>(), new StandardEventReceiver(), onDisposing)
             {
             }
