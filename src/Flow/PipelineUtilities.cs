@@ -27,5 +27,16 @@ namespace Flow
             }
             return state;
         }
+
+        public static T Sink<T, TState>(TState state, Action<T, TState> setup = null)
+            where T : PipelineResult, new()
+            where TState : IState
+        {
+            var result = new T();
+            result.Errors.AddRange(state.Errors);
+            setup?.Invoke(result, state);
+            state.Dispose();
+            return result;
+        }
     }
 }

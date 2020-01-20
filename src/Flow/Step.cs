@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Flow
 {
@@ -7,7 +6,7 @@ namespace Flow
     {
         private readonly Func<IState<T>> _method;
         
-        internal Step(Func<IState<T>> method)
+        public Step(Func<IState<T>> method)
         {
             _method = method;
         }
