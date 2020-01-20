@@ -11,7 +11,7 @@ namespace Flow
             _method = method;
         }
 
-        public IPipelineResult Sink() => PipelineResult.CreateResult<PipelineResult, IState>(_method());
+        public IPipelineResult Sink() => PipelineUtilities.Sink<PipelineResult, IState>(_method());
 
         
     }
@@ -29,7 +29,7 @@ namespace Flow
             new Pipeline<TR>(() => _method.Decorate((argument, state) => state.Next(projection(state.Result))));
 
         public IPipelineResult<T> Sink() =>
-            PipelineResult.CreateResult<PipelineResult<T>, IState<T>>(_method(), (result, state) =>
+            PipelineUtilities.Sink<PipelineResult<T>, IState<T>>(_method(), (result, state) =>
             {
                 if (!state.Errors.Any())
                 {

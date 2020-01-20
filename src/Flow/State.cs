@@ -1,22 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Flow
 {
     public class State : IState
     {
-        protected IEventReceiver EventReceiver { get; private set; }
-        private readonly List<IError> _errors = new List<IError>();
+        protected static State ConstructorProxy(IEnumerable<IError> errors, IEventReceiver eventReceiver, Action<IEnumerable<IError>, IEventReceiver> onDisposing) => 
+            new State(errors, eventReceiver, onDisposing);
 
+        protected IEventReceiver EventReceiver { get; }
+        private readonly List<IError> _errors = new List<IError>();
+        protected Action<IEnumerable<IError>, IEventReceiver> OnDisposing { get; }
 
         public State()
-            : this(new List<IError>(), new StandardEventReceiver())
+            : this(new List<IError>(), new StandardEventReceiver(), (e, er) => { })
         {
         }
 
-        public State(IEnumerable<IError> errors, IEventReceiver eventReceiver)
+        protected State(IEnumerable<IError> errors, IEventReceiver eventReceiver, Action<IEnumerable<IError>, IEventReceiver> onDisposing)
         {
             EventReceiver = eventReceiver;
             _errors.AddRange(errors);
+            OnDisposing = onDisposing;
         }
 
         public IEnumerable<IError> Errors => _errors;
@@ -29,36 +34,41 @@ namespace Flow
         {
             throw new System.NotImplementedException();
         }
+
+        public void Dispose()
+        {
+            OnDisposing(Errors, EventReceiver);
+        }
     }
 
     public class State<T> : State, IState<T>
     {
         public State(T result)
-            : this(result, new List<IError>(), new StandardEventReceiver())
+            : this(result, new List<IError>(), new StandardEventReceiver(), (e, er) => { })
         {
         }
 
-        public State(T result, IEnumerable<IError> errors, IEventReceiver eventReceiver)
-            : base(errors, eventReceiver)
+        protected State(T result, IEnumerable<IError> errors, IEventReceiver eventReceiver, Action<IEnumerable<IError>, IEventReceiver> onDisposing)
+            : base(errors, eventReceiver, onDisposing)
         {
             Result = result;
         }
 
         public T Result { get; }
-        
+
         public IState<TR> Next<TR>(TR result)
         {
-            return new State<TR>(result, Errors, EventReceiver);
+            return new State<TR>(result, Errors, EventReceiver, OnDisposing);
         }
 
         public IState<TR> Skip<TR>()
         {
-            return new State<TR>(default, Errors, EventReceiver);
+            return new State<TR>(default, Errors, EventReceiver, OnDisposing);
         }
 
         public IState Next()
         {
-            return new State(Errors, EventReceiver);
+            return ConstructorProxy(Errors, EventReceiver, OnDisposing);
         }
     }
 }

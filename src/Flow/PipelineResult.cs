@@ -6,16 +6,6 @@ namespace Flow
 {
     public class PipelineResult : IPipelineResult
     {
-        internal static T CreateResult<T, TState>(TState state, Action<T, TState> setup = null)
-            where T : PipelineResult, new()
-            where TState : IState
-        {
-            var result = new T();
-            result.Errors.AddRange(state.Errors);
-            setup?.Invoke(result, state);
-            return result;
-        }
-
         public PipelineResult()
         {
             Errors = new List<IError>();

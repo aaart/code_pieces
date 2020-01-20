@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Flow
 {
 
-    public interface IState
+    public interface IState : IDisposable
     {
         IState Skip();
         void PublishError(IError error);
