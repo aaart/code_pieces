@@ -1,6 +1,6 @@
 ﻿namespace Flow.Tests.TestUtilities
 {
-    public struct TestingError : IError
+    public struct TestingFilteringError : IFilteringError
     {
         public int Code { get; set; }
         public string Message { get; set; }

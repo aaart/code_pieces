@@ -8,14 +8,15 @@ namespace Flow
     {
         public PipelineResult()
         {
-            Errors = new List<IError>();
+            Errors = new List<IFilteringError>();
         }
 
-        public List<IError> Errors { get; }
+        public List<IFilteringError> Errors { get; }
 
-        IReadOnlyCollection<IError> IPipelineResult.Errors => Errors;
+        IReadOnlyCollection<IFilteringError> IPipelineResult.FilteringErrors => Errors;
+        public Exception Exception { get; }
 
-        public bool Failed => Errors.Any();
+        public bool Failed => Exception != null || Errors.Any();
     }
     public class PipelineResult<T> : PipelineResult, IPipelineResult<T>
     {

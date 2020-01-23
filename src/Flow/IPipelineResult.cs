@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Flow
 {
     public interface IPipelineResult
     {
-        IReadOnlyCollection<IError> Errors { get; }
+        IReadOnlyCollection<IFilteringError> FilteringErrors { get; }
+        Exception Exception { get; }
         bool Failed { get; }
     }
 

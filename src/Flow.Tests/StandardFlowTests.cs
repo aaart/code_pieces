@@ -3,22 +3,8 @@ using Xunit;
 
 namespace Flow.Tests
 {
-    public class StandardFlowTests
+    public partial class StandardFlowTests
     {
-        public class TestingInput
-        {
-
-        }
-
-        public class TestingFilter : IFilter<TestingInput>
-        {
-            public bool Check(TestingInput target, out IError error)
-            {
-                error = new TestingError();
-                return false;
-            }
-        }
-
         private readonly StandardPipelineBuilder _builder;
 
         public StandardFlowTests()
@@ -36,7 +22,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
                     count++;
@@ -46,7 +32,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Verify(x =>
                 {
                     count++;
@@ -55,7 +41,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
                     count++;
@@ -79,7 +65,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
                     count++;
@@ -89,7 +75,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Verify(x =>
                 {
                     count++;
@@ -98,7 +84,7 @@ namespace Flow.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingError())
+                }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
                     count++;
@@ -198,10 +184,10 @@ namespace Flow.Tests
         {
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingError())
+                .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, result.Errors.Count);
+            Assert.Equal(1, result.FilteringErrors.Count);
         }
 
         [Fact]
@@ -209,10 +195,10 @@ namespace Flow.Tests
         {
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingError())
+                .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Sink();
-            Assert.Equal(1, result.Errors.Count);
+            Assert.Equal(1, result.FilteringErrors.Count);
         }
 
         [Fact]
@@ -220,11 +206,11 @@ namespace Flow.Tests
         {
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingError())
+                .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Project(x => 1)
                 .Sink();
-            Assert.Equal(1, result.Errors.Count);
+            Assert.Equal(1, result.FilteringErrors.Count);
         }
 
         [Fact]
@@ -233,10 +219,10 @@ namespace Flow.Tests
             var result = _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingError())
+                .Verify(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, result.Errors.Count);
+            Assert.Equal(1, result.FilteringErrors.Count);
         }
 
 
@@ -246,7 +232,7 @@ namespace Flow.Tests
             bool executed = false;
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingError())
+                .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -261,7 +247,7 @@ namespace Flow.Tests
             bool executed = false;
             var result = _builder
                 .For(new { Msg = "Mockery" })
-                .Validate(x => x, x => false, () => new TestingError())
+                .Validate(x => x, x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -309,7 +295,7 @@ namespace Flow.Tests
             bool executed = false;
             var result = _builder
                 .For(new { Prop = true })
-                .Validate(x => x.Prop, x => x, () => new TestingError())
+                .Validate(x => x.Prop, x => x, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -325,7 +311,7 @@ namespace Flow.Tests
             var result = _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingError())
+                .Verify(x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -342,7 +328,7 @@ namespace Flow.Tests
             var result = _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => x.Msg, x => false, () => new TestingError())
+                .Verify(x => x.Msg, x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;

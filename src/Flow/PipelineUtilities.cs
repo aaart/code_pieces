@@ -21,14 +21,14 @@ namespace Flow
         {
             var state = method();
             TK target = transform(state.Result);
-            if (!filter.Check(target, out IError error))
+            if (!filter.Check(target, out IFilteringError error))
             {
                 state.PublishError(error);
             }
             return state;
         }
 
-        public static T Sink<T, TState>(TState state, Action<T, TState> setup = null)
+        public static T Sink<T, TState>(this TState state, Action<T, TState> setup = null)
             where T : PipelineResult, new()
             where TState : IState
         {

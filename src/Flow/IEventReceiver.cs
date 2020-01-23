@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Flow
+﻿namespace Flow
 {
-    public interface IEventReceiver : IDisposable
+    public interface IEventReceiver
     {
         void Receive<TE>(TE e)
             where TE : IEvent;

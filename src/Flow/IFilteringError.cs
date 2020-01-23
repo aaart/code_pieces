@@ -1,6 +1,6 @@
 ﻿namespace Flow
 {
-    public interface IError
+    public interface IFilteringError
     {
         int Code { get; }
         string Message { get; }

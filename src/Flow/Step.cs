@@ -11,10 +11,10 @@ namespace Flow
             _method = method;
         }
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IError> error) => 
+        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(validator, error)));
 
-        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IError> error) => 
+        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(x => x, new LambdaFilter<T>(validator, error)));
 
         public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
@@ -26,10 +26,10 @@ namespace Flow
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
             Clone(() => _method.Decorate((argument, state) => state.Next(apply(state.Result))));
 
-        public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IError> error) => 
+        public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(check, error)));
         
-        public IValidatedVerified<T> Verify(Func<T, bool> check, Func<IError> error) => 
+        public IValidatedVerified<T> Verify(Func<T, bool> check, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(x => x, new LambdaFilter<T>(check, error)));
 
         public IValidatedVerified<T> Verify(IFilter<T> filter) => 
