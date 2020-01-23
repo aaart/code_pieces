@@ -7,11 +7,38 @@ namespace Flow.Tests
     public partial class StandardFlowTests
     {
         [Fact]
-        public void StandardFlow_WhenFinalizeThrowsException_ExceptionReturned()
+        public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
             var result = _builder
                 .For(default(int))
                 .Finalize(x =>
+                {
+                    throw new Exception();
+                    return x;
+                })
+                .Sink();
+
+            Assert.NotNull(result.Exception);
+        }
+        
+        [Fact]
+        public void StandardFlow_WhenFinalize2ThrowsException_ExceptionReturned()
+        {
+            var result = _builder
+                .For(default(int))
+                .Finalize(x => throw new Exception())
+                .Sink();
+
+            Assert.NotNull(result.Exception);
+        }
+        
+        [Fact]
+        public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
+        {
+            var result = _builder
+                .For(default(int))
+                .Finalize(x => x)
+                .Project(x =>
                 {
                     throw new Exception();
                     return x;
