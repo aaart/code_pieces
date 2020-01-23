@@ -24,7 +24,7 @@ namespace Flow
             Clone(() => _method.Decorate(x => x, filter));
 
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
-            Clone(() => _method.Decorate(state => state.Next(apply(state.Result))));
+            Clone(() => _method.Decorate(state => apply(state.Result)));
 
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(check, error)));
@@ -38,26 +38,18 @@ namespace Flow
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
             Clone(() => _method.Decorate(transform, filter));
 
-        public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
+        public IValidatedVerified<T> Publish(Action<T, IEventReceiver> publishingMethod) =>
             Clone(() => _method.Decorate(state =>
             {
-                state.Receive(publishEvent(state.Result));
-                return state;
+                publishingMethod(state.Result, state.EventReceiver);
+                return state.Result;
             }));
 
         public IPipeline Finalize(Action<T> execution) => 
-            new Pipeline(() => _method.Decorate(state =>
-            {
-                execution(state.Result);
-                return state.Next();
-            }));
+            new Pipeline(() => _method.Decorate(state => execution(state.Result)));
 
         public IProjectablePipeline<TR> Finalize<TR>(Func<T, TR> execution) => 
-            new Pipeline<TR>(() => _method.Decorate(state =>
-            {
-                var r = execution(state.Result);
-                return state.Next(r);
-            }));
+            new Pipeline<TR>(() => _method.Decorate(state => execution(state.Result)));
 
         
         private Step<TR> Clone<TR>(Func<IState<TR>> method) => new Step<TR>(method);

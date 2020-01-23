@@ -10,7 +10,7 @@ namespace Flow
         void PublishError(IFilteringError filteringError);
         IEnumerable<IFilteringError> Errors { get; }
         Exception Exception { get; set; }
-        void Receive(IEvent @event);
+        IEventReceiver EventReceiver { get; }
     }
 
     public interface IState<out T> : IState

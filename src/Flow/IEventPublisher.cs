@@ -4,7 +4,6 @@ namespace Flow
 {
     public interface IEventPublisher<out T>
     {
-        IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent)
-            where TE : IEvent;
+        IValidatedVerified<T> Publish(Action<T, IEventReceiver> publishingMethod);
     }
 }
