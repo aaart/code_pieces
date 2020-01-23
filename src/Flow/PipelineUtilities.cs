@@ -20,10 +20,17 @@ namespace Flow
         public static IState<T> Decorate<T, TK>(this Func<IState<T>> method, Func<T, TK> transform, IFilter<TK> filter)
         {
             var state = method();
-            TK target = transform(state.Result);
-            if (!filter.Check(target, out IFilteringError error))
+            try
             {
-                state.PublishError(error);
+                TK target = transform(state.Result);
+                if (!filter.Check(target, out IFilteringError error))
+                {
+                    state.PublishError(error);
+                }
+            }
+            catch (Exception ex)
+            {
+                state.Exception = ex;
             }
             return state;
         }
@@ -34,6 +41,7 @@ namespace Flow
         {
             var result = new T();
             result.Errors.AddRange(state.Errors);
+            result.Exception = state.Exception;
             setup?.Invoke(result, state);
             state.Dispose();
             return result;
