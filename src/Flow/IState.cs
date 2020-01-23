@@ -9,6 +9,7 @@ namespace Flow
         IState Skip();
         void PublishError(IFilteringError filteringError);
         IEnumerable<IFilteringError> Errors { get; }
+        Exception Exception { get; set; }
         void Receive(IEvent @event);
     }
 

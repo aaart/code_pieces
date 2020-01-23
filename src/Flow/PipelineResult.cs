@@ -14,7 +14,8 @@ namespace Flow
         public List<IFilteringError> Errors { get; }
 
         IReadOnlyCollection<IFilteringError> IPipelineResult.FilteringErrors => Errors;
-        public Exception Exception { get; }
+        Exception IPipelineResult.Exception => Exception;
+        public Exception Exception { get; set; }
 
         public bool Failed => Exception != null || Errors.Any();
     }

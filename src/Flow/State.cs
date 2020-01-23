@@ -21,6 +21,7 @@ namespace Flow
         }
 
         public IEnumerable<IFilteringError> Errors => _errors;
+        public Exception Exception { get; set; }
 
         public IState Skip() => this;
 
