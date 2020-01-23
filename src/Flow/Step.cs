@@ -24,7 +24,7 @@ namespace Flow
             Clone(() => _method.Decorate(x => x, filter));
 
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
-            Clone(() => _method.Decorate((argument, state) => state.Next(apply(state.Result))));
+            Clone(() => _method.Decorate(state => state.Next(apply(state.Result))));
 
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(check, error)));
@@ -39,23 +39,23 @@ namespace Flow
             Clone(() => _method.Decorate(transform, filter));
 
         public IValidatedVerified<T> Publish<TE>(Func<T, TE> publishEvent) where TE : IEvent =>
-            Clone(() => _method.Decorate((argument, state) =>
+            Clone(() => _method.Decorate(state =>
             {
                 state.Receive(publishEvent(state.Result));
                 return state;
             }));
 
         public IPipeline Finalize(Action<T> execution) => 
-            new Pipeline(() => _method.Decorate((argument, state) =>
+            new Pipeline(() => _method.Decorate(state =>
             {
-                execution(argument);
+                execution(state.Result);
                 return state.Next();
             }));
 
         public IProjectablePipeline<TR> Finalize<TR>(Func<T, TR> execution) => 
-            new Pipeline<TR>(() => _method.Decorate((argument, state) =>
+            new Pipeline<TR>(() => _method.Decorate(state =>
             {
-                var r = execution(argument);
+                var r = execution(state.Result);
                 return state.Next(r);
             }));
 

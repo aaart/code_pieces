@@ -24,7 +24,7 @@ namespace Flow
         }
 
         public IPipeline<TR> Project<TR>(Func<T, TR> projection) => 
-            new Pipeline<TR>(() => _method.Decorate((argument, state) => state.Next(projection(state.Result))));
+            new Pipeline<TR>(() => _method.Decorate(state => state.Next(projection(state.Result))));
 
         public IPipelineResult<T> Sink() =>
             _method().Sink<PipelineResult<T>, IState<T>>((result, state) =>
