@@ -23,7 +23,7 @@ namespace Flow
             _method = method;
         }
 
-        public IPipeline<TR> Project<TR>(Func<T, TR> projection) => 
+        public IProjectablePipeline<TR> Project<TR>(Func<T, TR> projection) => 
             new Pipeline<TR>(() => _method.Decorate(state => projection(state.Result)));
 
         public IPipelineResult<T> Sink() =>
