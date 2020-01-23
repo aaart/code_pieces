@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Flow
 {
-    public class DummyError : IError
+    public class DummyFilteringError : IFilteringError
     {
         public int Code => 1;
         public string Message => "MSG";
@@ -17,9 +17,9 @@ namespace Flow
             var target = new { Name = "Random", Description = "More Random" };
             var pipeline = new StandardPipelineBuilder()
                 .For(target)
-                .Validate(x => x.Description, x => x != null, () => new DummyError())
+                .Validate(x => x.Description, x => x != null, () => new DummyFilteringError())
                 .Apply(x => new { Wrapper = x })
-                .Verify(x => x.Wrapper, x => x != null, () => new DummyError())
+                .Verify(x => x.Wrapper, x => x != null, () => new DummyFilteringError())
                 .Finalize(x => Console.Write("x"));
             var res = pipeline.Sink();
 

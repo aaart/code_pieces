@@ -1,7 +1,7 @@
 ﻿namespace Flow
 {
-    public interface IEvent
+    public interface IEvent //<out T>
     {
-        
+        //T Info { get; }
     }
 }

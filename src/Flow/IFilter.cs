@@ -2,6 +2,6 @@
 {
     public interface IFilter<in T>
     {
-        bool Check(T target, out IError error);
+        bool Check(T target, out IFilteringError filteringError);
     }
 }

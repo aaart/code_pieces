@@ -5,9 +5,5 @@
         public void Receive<TE>(TE e) where TE : IEvent
         {
         }
-
-        public void Dispose()
-        {
-        }
     }
 }

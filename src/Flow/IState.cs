@@ -7,8 +7,8 @@ namespace Flow
     public interface IState : IDisposable
     {
         IState Skip();
-        void PublishError(IError error);
-        IEnumerable<IError> Errors { get; }
+        void PublishError(IFilteringError filteringError);
+        IEnumerable<IFilteringError> Errors { get; }
         void Receive(IEvent @event);
     }
 
