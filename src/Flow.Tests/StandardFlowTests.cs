@@ -16,7 +16,7 @@ namespace Flow.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount()
         {
             int count = 0;
-            var finalized = _builder
+            _builder
                 .For(new { })
                 .Validate(x =>
                 {
@@ -99,7 +99,7 @@ namespace Flow.Tests
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var (result, exception, readOnlyCollection) = _builder
+            var (result, _, _) = _builder
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
@@ -230,7 +230,7 @@ namespace Flow.Tests
         public void Flow_WhenValidationFails_PipelineStopped()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x =>
@@ -245,7 +245,7 @@ namespace Flow.Tests
         public void Flow_WhenValidationFails_PipelineStopped2()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => x, x => false, () => new TestingFilteringError())
                 .Finalize(x =>
@@ -261,7 +261,7 @@ namespace Flow.Tests
         public void Flow_WhenValidationFails_PipelineStopped3()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => new TestingInput(), new TestingFilter())
                 .Finalize(x =>
@@ -277,7 +277,7 @@ namespace Flow.Tests
         public void Flow_WhenValidationFails_PipelineStopped4()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new TestingInput())
                 .Validate(new TestingFilter())
                 .Finalize(x =>
@@ -293,7 +293,7 @@ namespace Flow.Tests
         public void Flow_WhenValidationChangesTarget_ExpectFinalizeExecuted()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Prop = true })
                 .Validate(x => x.Prop, x => x, () => new TestingFilteringError())
                 .Finalize(x =>
@@ -308,7 +308,7 @@ namespace Flow.Tests
         public void Flow_WhenVerificationFails_PipelineStopped()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
                 .Verify(x => false, () => new TestingFilteringError())
@@ -325,7 +325,7 @@ namespace Flow.Tests
         public void Flow_WhenVerificationFails_PipelineStopped2()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
                 .Verify(x => x.Msg, x => false, () => new TestingFilteringError())
@@ -342,7 +342,7 @@ namespace Flow.Tests
         public void Flow_WhenVerificationFails_PipelineStopped3()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
                 .Verify(x => new TestingInput(), new TestingFilter())
@@ -359,7 +359,7 @@ namespace Flow.Tests
         public void Flow_WhenVerificationFails_PipelineStopped4()
         {
             bool executed = false;
-            var result = _builder
+            _builder
                 .For(new TestingInput())
                 .Apply(x => x)
                 .Verify(new TestingFilter())
