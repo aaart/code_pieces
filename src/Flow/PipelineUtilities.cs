@@ -72,7 +72,7 @@ namespace Flow
         {
             var result = new T();
             setup?.Invoke(result, state);
-            state.Dispose();
+            state.Finalize();
             return (result, state.Exception, state.Errors.ToList());
         }
     }

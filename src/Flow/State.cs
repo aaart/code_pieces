@@ -30,7 +30,7 @@ namespace Flow
 
         public void PublishError(IFilteringError filteringError) => _errors.Add(filteringError);
 
-        public void Dispose() => OnDisposing(Errors, EventReceiver);
+        public void Finalize() => OnDisposing(Errors, EventReceiver);
     }
 
     public class State<T, TEventReceiver> : State<TEventReceiver>, IState<T>
