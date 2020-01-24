@@ -9,7 +9,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
-            var result = _builder
+            var (_, exception, _) = _builder
                 .For(default(int))
                 .Finalize(x =>
                 {
@@ -18,24 +18,24 @@ namespace Flow.Tests
                 })
                 .Sink();
 
-            Assert.NotNull(result.Exception);
+            Assert.NotNull(exception);
         }
         
         [Fact]
         public void StandardFlow_WhenFinalize2ThrowsException_ExceptionReturned()
         {
-            var result = _builder
+            var (_, exception, _) = _builder
                 .For(default(int))
                 .Finalize(x => throw new Exception())
                 .Sink();
 
-            Assert.NotNull(result.Exception);
+            Assert.NotNull(exception);
         }
         
         [Fact]
         public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
         {
-            var result = _builder
+            var (_, exception, _) = _builder
                 .For(default(int))
                 .Finalize(x => x)
                 .Project(x =>
@@ -45,13 +45,13 @@ namespace Flow.Tests
                 })
                 .Sink();
 
-            Assert.NotNull(result.Exception);
+            Assert.NotNull(exception);
         }
         
         [Fact]
         public void StandardFlow_WhenValidateThrowsException_ExceptionReturned()
         {
-            var result = _builder
+            var (_, exception, _) = _builder
                 .For(default(int))
                 .Validate(x =>
                 {
@@ -61,13 +61,13 @@ namespace Flow.Tests
                 .Finalize(x => x)
                 .Sink();
 
-            Assert.NotNull(result.Exception);
+            Assert.NotNull(exception);
         }
         
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_ExceptionReturned()
         {
-            var result = _builder
+            var (_, exception, _) = _builder
                 .For(default(int))
                 .Apply(x => x)
                 .Verify(x =>
@@ -78,7 +78,7 @@ namespace Flow.Tests
                 .Finalize(x => x)
                 .Sink();
 
-            Assert.NotNull(result.Exception);
+            Assert.NotNull(exception);
         }
     }
 }
