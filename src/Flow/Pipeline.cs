@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Flow
@@ -11,7 +12,7 @@ namespace Flow
             _method = method;
         }
 
-        public IPipelineResult Sink() => _method().Sink<PipelineResult, IState>();
+        public (IPipelineResult, Exception, IReadOnlyCollection<IFilteringError>) Sink() => _method().Sink<PipelineResult, IState>();
     }
 
     public class Pipeline<T> : IProjectablePipeline<T>
@@ -26,7 +27,7 @@ namespace Flow
         public IProjectablePipeline<TR> Project<TR>(Func<T, TR> projection) => 
             new Pipeline<TR>(() => _method.Decorate(state => projection(state.Result)));
 
-        public IPipelineResult<T> Sink() =>
+        public (IPipelineResult<T>, Exception, IReadOnlyCollection<IFilteringError>) Sink() =>
             _method().Sink<PipelineResult<T>, IState<T>>((result, state) =>
             {
                 if (!state.Errors.Any())
@@ -35,7 +36,7 @@ namespace Flow
                 }
             });
 
-        IPipelineResult IPipeline.Sink()
+        (IPipelineResult, Exception, IReadOnlyCollection<IFilteringError>) IPipeline.Sink()
         {
             return Sink();
         }

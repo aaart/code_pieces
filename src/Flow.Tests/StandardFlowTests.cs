@@ -59,7 +59,7 @@ namespace Flow.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
         {
             int count = 0;
-            var finalized = _builder
+            var (result, _, _) = _builder
                 .For(new { })
                 .Validate(x =>
                 {
@@ -93,13 +93,13 @@ namespace Flow.Tests
                 .Finalize(x => count + 1)
                 .Project(x => x + 1)
                 .Sink();
-            Assert.Equal(8, finalized.Value);
+            Assert.Equal(8, result.Value);
         }
 
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var result = _builder
+            var (result, exception, readOnlyCollection) = _builder
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
@@ -110,7 +110,7 @@ namespace Flow.Tests
         public void DefultInt_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithIntDefaultResult()
         {
             var input = default(int);
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -121,7 +121,7 @@ namespace Flow.Tests
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
             var input = 1;
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -132,7 +132,7 @@ namespace Flow.Tests
         public void DefaultIntAppliedOne_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 1;
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(0)
                 .Apply(x => applied)
                 .Finalize(x => x)
@@ -144,7 +144,7 @@ namespace Flow.Tests
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 2;
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -157,7 +157,7 @@ namespace Flow.Tests
         public void DefaultIn_WhenApplicationChangesType_ExpectSuccessWithEmptyString()
         {
             var applied = string.Empty;
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -169,7 +169,7 @@ namespace Flow.Tests
         [Fact]
         public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
         {
-            var result = _builder
+            var (result, _, _) = _builder
                 .For(0)
                 .Apply(x => x + 2)
                 .Apply(x => x.ToString())
@@ -182,47 +182,47 @@ namespace Flow.Tests
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult()
         {
-            var result = _builder
+            var (_, _, filteringErrors) = _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, result.FilteringErrors.Count);
+            Assert.Equal(1, filteringErrors.Count);
         }
 
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult2()
         {
-            var result = _builder
+            var (_, _, filteringErrors) = _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Sink();
-            Assert.Equal(1, result.FilteringErrors.Count);
+            Assert.Equal(1, filteringErrors.Count);
         }
 
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult3()
         {
-            var result = _builder
+            var (_, _, filteringErrors) = _builder
                 .For(new { Msg = "Mockery" })
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Project(x => 1)
                 .Sink();
-            Assert.Equal(1, result.FilteringErrors.Count);
+            Assert.Equal(1, filteringErrors.Count);
         }
 
         [Fact]
         public void Flow_WhenVerificationFails_ExpectSingleErrorInResult()
         {
-            var result = _builder
+            var (_, _, filteringErrors) = _builder
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
                 .Verify(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, result.FilteringErrors.Count);
+            Assert.Equal(1, filteringErrors.Count);
         }
 
 

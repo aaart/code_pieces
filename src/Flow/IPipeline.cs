@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Flow
 {
     public interface IPipeline
     {
-        IPipelineResult Sink();
+        (IPipelineResult, Exception, IReadOnlyCollection<IFilteringError>) Sink();
     }
 
-    public interface IPipeline<out T> : IPipeline
+    public interface IPipeline<T> : IPipeline
     {
-        new IPipelineResult<T> Sink();
+        new (IPipelineResult<T>, Exception, IReadOnlyCollection<IFilteringError>) Sink();
     }
 }

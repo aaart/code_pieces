@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Flow
@@ -65,16 +66,14 @@ namespace Flow
             }
         }
 
-        public static T Sink<T, TState>(this TState state, Action<T, TState> setup = null)
-            where T : PipelineResult, new()
+        public static (T, Exception, IReadOnlyCollection<IFilteringError>) Sink<T, TState>(this TState state, Action<T, TState> setup = null)
+            where T : IPipelineResult, new()
             where TState : IState
         {
             var result = new T();
-            result.Errors.AddRange(state.Errors);
-            result.Exception = state.Exception;
             setup?.Invoke(result, state);
             state.Dispose();
-            return result;
+            return (result, state.Exception, state.Errors.ToList());
         }
     }
 }
