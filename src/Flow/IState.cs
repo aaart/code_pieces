@@ -11,7 +11,7 @@ namespace Flow
         IEnumerable<IFilteringError> Errors { get; }
         Exception Exception { get; set; }
         IEventReceiver EventReceiver { get; }
-        void Finalize();
+        void Complete();
     }
 
     public interface IState<out T> : IState

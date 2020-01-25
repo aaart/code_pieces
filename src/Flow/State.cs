@@ -11,13 +11,13 @@ namespace Flow
             new State<TEventReceiver>(errors, eventReceiver, onDisposing, exception);
 
         private readonly List<IFilteringError> _errors = new List<IFilteringError>();
-        protected Action<IEnumerable<IFilteringError>, TEventReceiver> OnDisposing { get; }
+        protected Action<IEnumerable<IFilteringError>, TEventReceiver> OnComplete { get; }
         
-        protected State(IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onDisposing, Exception exception)
+        protected State(IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onComplete, Exception exception)
         {
             EventReceiver = eventReceiver;
             _errors.AddRange(errors);
-            OnDisposing = onDisposing;
+            OnComplete = onComplete;
             Exception = exception;
         }
 
@@ -30,7 +30,7 @@ namespace Flow
 
         public void PublishError(IFilteringError filteringError) => _errors.Add(filteringError);
 
-        public void Finalize() => OnDisposing(Errors, EventReceiver);
+        public void Complete() => OnComplete(Errors, EventReceiver);
     }
 
     public class State<T, TEventReceiver> : State<TEventReceiver>, IState<T>
@@ -50,24 +50,24 @@ namespace Flow
         {
         }
 
-        protected State(T result, IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onDisposing)
-            : this(result, errors, eventReceiver, onDisposing, null)
+        protected State(T result, IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onComplete)
+            : this(result, errors, eventReceiver, onComplete, null)
         {
             Result = result;
         }
 
-        private State(T result, IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onDisposing, Exception exception)
-            : base(errors, eventReceiver, onDisposing, exception)
+        private State(T result, IEnumerable<IFilteringError> errors, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onComplete, Exception exception)
+            : base(errors, eventReceiver, onComplete, exception)
         {
             Result = result;
         }
 
         public T Result { get; }
 
-        public IState<TR> Next<TR>(TR result) => ConstructorProxy(result, Errors, EventReceiver, OnDisposing, Exception);
+        public IState<TR> Next<TR>(TR result) => ConstructorProxy(result, Errors, EventReceiver, OnComplete, Exception);
 
-        public IState<TR> Skip<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnDisposing, Exception);
+        public IState<TR> Skip<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnComplete, Exception);
 
-        public IState Next() => ConstructorProxy(Errors, EventReceiver, OnDisposing, Exception);
+        public IState Next() => ConstructorProxy(Errors, EventReceiver, OnComplete, Exception);
     }
 }
