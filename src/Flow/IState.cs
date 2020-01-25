@@ -18,7 +18,7 @@ namespace Flow
     {
         IState Next();
         IState<TR> Next<TR>(TR result);
-        new IState<TR> Skip<TR>();
+        IState<TR> Skip<TR>();
         
         T Result { get; }
     }
