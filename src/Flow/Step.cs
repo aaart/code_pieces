@@ -23,9 +23,6 @@ namespace Flow
         public IBeginFlow<T> Validate(IFilter<T> filter) => 
             Clone(() => _method.Decorate(x => x, filter));
 
-        public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) => 
-            Clone(() => _method.Decorate(state => apply(state.Result)));
-
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(check, error)));
         
@@ -37,6 +34,9 @@ namespace Flow
 
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
             Clone(() => _method.Decorate(transform, filter));
+
+        public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) =>
+            Clone(() => _method.Decorate(state => apply(state.Result)));
 
         public IValidatedVerified<T> Publish(Action<T, IEventReceiver> publishingMethod) =>
             Clone(() => _method.Decorate(state =>
