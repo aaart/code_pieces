@@ -14,7 +14,7 @@ namespace Flow.Tests
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, filteringErrors.Count);
+            Assert.Single(filteringErrors);
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace Flow.Tests
                 .Validate(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Sink();
-            Assert.Equal(1, filteringErrors.Count);
+            Assert.Single(filteringErrors);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Flow.Tests
                 .Finalize(x => false)
                 .Project(x => 1)
                 .Sink();
-            Assert.Equal(1, filteringErrors.Count);
+            Assert.Single(filteringErrors);
         }
 
         [Fact]
@@ -49,9 +49,48 @@ namespace Flow.Tests
                 .Verify(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(1, filteringErrors.Count);
+            Assert.Single(filteringErrors);
         }
 
+        [Fact]
+        public void Flow_WhenVerificationFailsTwice_ExpectTwoErrorsinResult()
+        {
+            var (_, _, filteringErrors) = _builder
+                .For(new { Msg = "Mockery" })
+                .Apply(x => x)
+                .Verify(x => false, () => new TestingFilteringError())
+                .Verify(x => false, () => new TestingFilteringError())
+                .Finalize(Predefined.EmptyMethod)
+                .Sink();
+            Assert.Equal(2, filteringErrors.Length);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFailsTwice_ExpectTwoErrorsinResult()
+        {
+            var (_, _, filteringErrors) = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingFilteringError())
+                .Validate(x => false, () => new TestingFilteringError())
+                .Apply(x => x)
+                .Finalize(Predefined.EmptyMethod)
+                .Sink();
+            Assert.Equal(2, filteringErrors.Length);
+        }
+        
+        [Fact]
+        public void Flow_WhenValidationFailsTwiceAndVerificationFails_ExpectTwoErrorsinResult()
+        {
+            var (_, _, filteringErrors) = _builder
+                .For(new { Msg = "Mockery" })
+                .Validate(x => false, () => new TestingFilteringError())
+                .Validate(x => false, () => new TestingFilteringError())
+                .Apply(x => x)
+                .Verify(x => false, () => new TestingFilteringError())
+                .Finalize(Predefined.EmptyMethod)
+                .Sink();
+            Assert.Equal(2, filteringErrors.Length);
+        }
 
         [Fact]
         public void Flow_WhenValidationFails_PipelineStopped()

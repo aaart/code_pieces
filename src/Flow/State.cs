@@ -34,6 +34,11 @@ namespace Flow
         public bool Failed { get; private set; }
 
         public IState Skip() => this;
+        public IState Fail()
+        {
+            Failed = true;
+            return this;
+        }
 
         public void PublishError(IFilteringError filteringError) => _errors.Add(filteringError);
 
@@ -80,6 +85,7 @@ namespace Flow
         public IState<TR> Next<TR>(TR result) => ConstructorProxy(result, Errors, EventReceiver, OnStateDone, Exception, Failed);
 
         public IState<TR> Skip<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnStateDone, Exception, Failed);
+        public IState<TR> Fail<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnStateDone, Exception, true);
 
         public IState Next() => ConstructorProxy(Errors, EventReceiver, OnStateDone, Exception, Failed);
     }

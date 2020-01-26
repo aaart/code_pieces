@@ -8,6 +8,7 @@ namespace Flow
     {
         bool Failed { get; }
         IState Skip();
+        IState Fail();
         void PublishError(IFilteringError filteringError);
         IEnumerable<IFilteringError> Errors { get; }
         Exception Exception { get; set; }
@@ -20,7 +21,8 @@ namespace Flow
         IState Next();
         IState<TR> Next<TR>(TR result);
         IState<TR> Skip<TR>();
-        
+        IState<TR> Fail<TR>();
+
         T Result { get; }
     }
 }
