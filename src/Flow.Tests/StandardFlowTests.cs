@@ -21,7 +21,7 @@ namespace Flow.Tests
                 .Validate(x =>
                 {
                     count++;
-                    return true;
+                    return count == 1;
                 }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
@@ -31,7 +31,7 @@ namespace Flow.Tests
                 .Verify(x =>
                 {
                     count++;
-                    return true;
+                    return count == 3;
                 }, () => new TestingFilteringError())
                 .Verify(x =>
                 {
@@ -40,12 +40,12 @@ namespace Flow.Tests
                 }, x =>
                 {
                     count++;
-                    return true;
+                    return count == 5;
                 }, () => new TestingFilteringError())
                 .Apply(x =>
                 {
                     count++;
-                    return x;
+                    return count == 6;
                 })
                 .Finalize(x =>
                 {
