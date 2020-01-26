@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using Flow.Tests.TestUtilities;
 using Xunit;
 
 namespace Flow.Tests
 {
     public class StateTests
     {
-        public class TestingState : State<int, StandardEventReceiver>
+        public class TestingState : State<int, BlackholeEventReceiver>
         {
-            public TestingState(Action<IEnumerable<IFilteringError>, StandardEventReceiver> onStateDone)
-                : base(0, new StateData<StandardEventReceiver>(new StandardEventReceiver(), onStateDone))
+            public TestingState(Action<IEnumerable<IFilteringError>, BlackholeEventReceiver> onStateDone)
+                : base(0, new StateData<BlackholeEventReceiver>(new BlackholeEventReceiver(), onStateDone))
             {
             }
 
         }
 
         [Fact]
-        public void Flow_ExpectStateDisposed()
+        public void Flow_ExpectStateDone()
         {
-            bool disposed = false;
-            new Step<int>(() => new TestingState((e, er) => disposed = true)).Finalize(x => { }).Sink();
+            bool done = false;
+            new Step<int>(() => new TestingState((e, er) => done = true)).Finalize(x => { }).Sink();
 
-            Assert.True(disposed);
+            Assert.True(done);
         }
     }
 }
