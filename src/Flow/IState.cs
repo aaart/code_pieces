@@ -6,6 +6,7 @@ namespace Flow
 
     public interface IState
     {
+        bool Failed { get; }
         IState Skip();
         void PublishError(IFilteringError filteringError);
         IEnumerable<IFilteringError> Errors { get; }

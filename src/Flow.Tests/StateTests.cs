@@ -10,7 +10,7 @@ namespace Flow.Tests
         public class TestingState : State<int, StandardEventReceiver>
         {
             public TestingState(Action<IEnumerable<IFilteringError>, StandardEventReceiver> onStateDone)
-                : base(0, new List<IFilteringError>(), new StandardEventReceiver(), onStateDone)
+                : base(0, new StandardEventReceiver(), onStateDone)
             {
             }
 
