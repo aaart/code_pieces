@@ -7,25 +7,25 @@ namespace Flow
     public static class PipelineUtilities
     {
 
-        public static bool Execute<T>(this Func<IState<T>> method, out IState<T> state)
+        public static bool Execute<T>(this Func<IState<T>> step, out IState<T> state)
         {
-            state = method();
-            return !state.Errors.Any();
+            state = step();
+            return !state.Errors.Any() && !state.Failed;
         }
 
-        public static IState Decorate<T>(this Func<IState<T>> method, Action<IState<T>> target) =>
-            method.Execute(out IState<T> state) ? TryCatch(state, target) : state.Skip();
+        public static IState Decorate<T>(this Func<IState<T>> step, Action<IState<T>> target) =>
+            step.Execute(out IState<T> state) ? TryCatch(state, target) : state.Fail();
 
         public static IState<TR> Decorate<T, TR>(this Func<IState<T>> method, Func<IState<T>, TR> target) =>
-            method.Execute(out IState<T> state) ? TryCatch(state, target) : state.Skip<TR>();
+            method.Execute(out IState<T> state) ? TryCatch(state, target) : state.Fail<TR>();
 
-        public static IState<T> Decorate<T, TK>(this Func<IState<T>> method, Func<T, TK> transform, IFilter<TK> filter)
+        public static IState<T> Decorate<T, TK>(this Func<IState<T>> filtering, Func<T, TK> transform, IFilter<TK> filter)
         {
-            var state = method();
+            var state = filtering();
             try
             {
                 TK target = transform(state.Result);
-                if (!filter.Check(target, out IFilteringError error))
+                if (!state.Failed && !filter.Check(target, out IFilteringError error))
                 {
                     state.PublishError(error);
                 }
@@ -38,11 +38,11 @@ namespace Flow
             return state;
         }
 
-        public static IState TryCatch<T>(IState<T> state, Action<IState<T>> method)
+        public static IState TryCatch<T>(IState<T> state, Action<IState<T>> step)
         {
             try
             {
-                method(state);
+                step(state);
                 return state.Next();
             }
             catch (Exception ex)
@@ -52,11 +52,11 @@ namespace Flow
             }
         }
 
-        public static IState<TR> TryCatch<T, TR>(IState<T> state, Func<IState<T>, TR> method)
+        public static IState<TR> TryCatch<T, TR>(IState<T> state, Func<IState<T>, TR> step)
         {
             try
             {
-                var r = method(state);
+                var r = step(state);
                 return state.Next(r);
             }
             catch (Exception ex)
@@ -66,14 +66,14 @@ namespace Flow
             }
         }
 
-        public static (T, Exception, IReadOnlyCollection<IFilteringError>) Sink<T, TState>(this TState state, Action<T, TState> setup = null)
+        public static (T, Exception, IFilteringError[]) Sink<T, TState>(this TState state, Action<T, TState> setup = null)
             where T : IPipelineResult, new()
             where TState : IState
         {
             var result = new T();
             setup?.Invoke(result, state);
             state.Done();
-            return (result, state.Exception, state.Errors.ToList());
+            return (result, state.Exception, state.Errors.ToArray());
         }
     }
 }

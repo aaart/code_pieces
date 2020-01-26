@@ -5,11 +5,11 @@ namespace Flow
 {
     public interface IPipeline
     {
-        (IPipelineResult, Exception, IReadOnlyCollection<IFilteringError>) Sink();
+        (IPipelineResult, Exception, IFilteringError[]) Sink();
     }
 
     public interface IPipeline<T> : IPipeline
     {
-        new (IPipelineResult<T>, Exception, IReadOnlyCollection<IFilteringError>) Sink();
+        new (IPipelineResult<T>, Exception, IFilteringError[]) Sink();
     }
 }
