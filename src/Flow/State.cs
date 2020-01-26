@@ -6,87 +6,51 @@ namespace Flow
     public class State<TEventReceiver> : IState
         where TEventReceiver : IEventReceiver
     {
-        protected static State<TEventReceiver> ConstructorProxy(IEnumerable<IFilteringError> errors,
-            TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onDisposing, Exception exception, bool failed) =>
-            new State<TEventReceiver>(eventReceiver, onDisposing, errors, exception, failed);
-
-        private readonly List<IFilteringError> _errors = new List<IFilteringError>();
-        protected Action<IEnumerable<IFilteringError>, TEventReceiver> OnStateDone { get; }
-        
-        protected State(
-            TEventReceiver eventReceiver, 
-            Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone,
-            IEnumerable<IFilteringError> errors, 
-            Exception exception, 
-            bool failed)
+        protected internal State(StateData<TEventReceiver> stateData)
         {
-            EventReceiver = eventReceiver;
-            _errors.AddRange(errors);
-            OnStateDone = onStateDone;
-            Exception = exception;
-            Failed = failed;
+            Data = stateData;
         }
+        protected StateData<TEventReceiver> Data { get; }
 
-        IEventReceiver IState.EventReceiver => EventReceiver; 
-        public TEventReceiver EventReceiver { get; }
-        public IEnumerable<IFilteringError> Errors => _errors;
-        public Exception Exception { get; set; }
-        public bool Failed { get; private set; }
+        IEventReceiver IState.EventReceiver => Data.EventReceiver;
+        public IEnumerable<IFilteringError> FilteringErrors => Data.FilteringErrors;
+        public void PublishException(Exception exception) => Data.Exception = exception;
+        public Exception Exception => Data.Exception;
+        public bool Failed => Data.Failed;
 
         public IState Skip() => this;
         public IState Fail()
         {
-            Failed = true;
+            Data.Failed = true;
             return this;
         }
 
-        public void PublishError(IFilteringError filteringError) => _errors.Add(filteringError);
+        public void PublishFilteringError(IFilteringError filteringError) => Data.FilteringErrors.Add(filteringError);
 
-        public void Done() => OnStateDone(Errors, EventReceiver);
+        public void Done() => Data.OnStateDone(Data.FilteringErrors, Data.EventReceiver);
     }
 
     public class State<T, TEventReceiver> : State<TEventReceiver>, IState<T>
         where TEventReceiver : IEventReceiver
     {
-        protected static State<TR, TEventReceiver> ConstructorProxy<TR>(TR result, IEnumerable<IFilteringError> errors,
-            TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onDisposing, Exception exception, bool failed) =>
-            new State<TR, TEventReceiver>(result, eventReceiver, onDisposing, errors, exception, failed);
-
-        public State(T result, TEventReceiver eventReceiver)
-            : this(result, eventReceiver, (e, er) => { }, new List<IFilteringError>(), null, false)
-        {
-        }
-        
-        public State(T result, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone, bool failed = false)
-            : this(result, eventReceiver, onStateDone, new List<IFilteringError>(), null, failed)
-        {
-        }
-
-        protected State(T result, TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone, IEnumerable<IFilteringError> errors, bool failed)
-            : this(result, eventReceiver, onStateDone, errors, null, failed)
-        {
-            Result = result;
-        }
-
-        private State(
-            T result, 
-            TEventReceiver eventReceiver, 
-            Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone, 
-            IEnumerable<IFilteringError> errors,
-            Exception exception, 
-            bool failed)
-            : base(eventReceiver, onStateDone, errors, exception, failed)
+        public State(T result, StateData<TEventReceiver> stateData)
+            : base(stateData)
         {
             Result = result;
         }
 
         public T Result { get; }
 
-        public IState<TR> Next<TR>(TR result) => ConstructorProxy(result, Errors, EventReceiver, OnStateDone, Exception, Failed);
+        public IState<TR> Next<TR>(TR result) => new State<TR, TEventReceiver>(result, Data);
 
-        public IState<TR> Skip<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnStateDone, Exception, Failed);
-        public IState<TR> Fail<TR>() => ConstructorProxy<TR>(default, Errors, EventReceiver, OnStateDone, Exception, true);
+        public IState<TR> Skip<TR>() => new State<TR, TEventReceiver>(default, Data);
 
-        public IState Next() => ConstructorProxy(Errors, EventReceiver, OnStateDone, Exception, Failed);
+        public IState<TR> Fail<TR>()
+        {
+            Data.Failed = true;
+            return new State<TR, TEventReceiver>(default, Data);
+        }
+
+        public IState Next() => new State<TEventReceiver>(Data);
     }
 }
