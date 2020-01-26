@@ -9,9 +9,10 @@ namespace Flow
         bool Failed { get; }
         IState Skip();
         IState Fail();
-        void PublishError(IFilteringError filteringError);
-        IEnumerable<IFilteringError> Errors { get; }
-        Exception Exception { get; set; }
+        void PublishFilteringError(IFilteringError filteringError);
+        void PublishException(Exception exception);
+        IEnumerable<IFilteringError> FilteringErrors { get; }
+        Exception Exception { get; }
         IEventReceiver EventReceiver { get; }
         void Done();
     }
