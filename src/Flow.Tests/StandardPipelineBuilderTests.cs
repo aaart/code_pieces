@@ -5,11 +5,11 @@ namespace Flow.Tests
 {
     public class StandardPipelineBuilderTests
     {
-        private readonly StandardPipelineBuilder _builder;
+        private readonly StandardFlowBuilder _builder;
 
         public StandardPipelineBuilderTests()
         {
-            _builder = new StandardPipelineBuilder();
+            _builder = new StandardFlowBuilder();
         }
 
         [Fact]

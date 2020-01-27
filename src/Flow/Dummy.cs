@@ -15,7 +15,7 @@ namespace Flow
         {
 
             var target = new { Name = "Random", Description = "More Random" };
-            var pipeline = new StandardPipelineBuilder()
+            var pipeline = new StandardFlowBuilder()
                 .For(target)
                 .Validate(x => x.Description, x => x != null, () => new DummyFilteringError())
                 .Apply(x => new { Wrapper = x })
@@ -23,7 +23,7 @@ namespace Flow
                 .Finalize(x => Console.Write("x"));
             var res = pipeline.Sink();
 
-            new StandardPipelineBuilder().For(target).Finalize(x => new { Result = x });
+            new StandardFlowBuilder().For(target).Finalize(x => new { Result = x });
 
             Expression<Func<bool>> expr = () => true;
         }
