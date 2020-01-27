@@ -2,7 +2,7 @@
 
 namespace Flow
 {
-    public class Step<T> : IBeginFlow<T>, IValidatedVerified<T>
+    public class Step<T> : IFlow<T>, IValidatedVerified<T>
     {
         private readonly Func<IState<T>> _method;
         
@@ -11,16 +11,16 @@ namespace Flow
             _method = method;
         }
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IFilteringError> error) => 
+        public IFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR>(validator, error)));
 
-        public IBeginFlow<T> Validate(Func<T, bool> validator, Func<IFilteringError> error) => 
+        public IFlow<T> Validate(Func<T, bool> validator, Func<IFilteringError> error) => 
             Clone(() => _method.Decorate(x => x, new LambdaFilter<T>(validator, error)));
 
-        public IBeginFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
+        public IFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter) => 
             Clone(() => _method.Decorate(transform, filter));
 
-        public IBeginFlow<T> Validate(IFilter<T> filter) => 
+        public IFlow<T> Validate(IFilter<T> filter) => 
             Clone(() => _method.Decorate(x => x, filter));
 
         public IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error) => 
