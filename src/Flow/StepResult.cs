@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public class State<TEventReceiver> : IState
+    public class StepResult<TEventReceiver> : IState
         where TEventReceiver : IEventReceiver
     {
-        protected internal State(StateData<TEventReceiver> stateData)
+        protected internal StepResult(StateData<TEventReceiver> stateData)
         {
             Data = stateData;
         }
@@ -30,10 +30,10 @@ namespace Flow
         public void Done() => Data.OnStateDone(Data.FilteringErrors, Data.EventReceiver);
     }
 
-    public class State<T, TEventReceiver> : State<TEventReceiver>, IState<T>
+    public class StepResult<T, TEventReceiver> : StepResult<TEventReceiver>, IState<T>
         where TEventReceiver : IEventReceiver
     {
-        public State(T result, StateData<TEventReceiver> stateData)
+        public StepResult(T result, StateData<TEventReceiver> stateData)
             : base(stateData)
         {
             Result = result;
@@ -41,16 +41,16 @@ namespace Flow
 
         public T Result { get; }
 
-        public IState<TR> Next<TR>(TR result) => new State<TR, TEventReceiver>(result, Data);
+        public IState<TR> Next<TR>(TR result) => new StepResult<TR, TEventReceiver>(result, Data);
 
-        public IState<TR> Skip<TR>() => new State<TR, TEventReceiver>(default, Data);
+        public IState<TR> Skip<TR>() => new StepResult<TR, TEventReceiver>(default, Data);
 
         public IState<TR> Fail<TR>()
         {
             Data.Failed = true;
-            return new State<TR, TEventReceiver>(default, Data);
+            return new StepResult<TR, TEventReceiver>(default, Data);
         }
 
-        public IState Next() => new State<TEventReceiver>(Data);
+        public IState Next() => new StepResult<TEventReceiver>(Data);
     }
 }

@@ -9,7 +9,7 @@ namespace Flow.Tests
         public void Flow_WhenTestingEventPublished_ExpectEventReceived1()
         {
             bool received = false;
-            new Step<int>(() => new State<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
+            new Step<int>(() => new StepResult<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
                 .Publish((x, er) => er.Receive(new TestingEvent()))
                 .Finalize(x => { })
                 .Sink();
@@ -21,7 +21,7 @@ namespace Flow.Tests
         public void Flow_WhenTestingEventPublished_ExpectEventReceived2()
         {
             bool received = false;
-            new Step<int>(() => new State<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
+            new Step<int>(() => new StepResult<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
                 .Publish((x, er) => er.Receive(new TestingEvent()))
                 .Finalize(x => x)
                 .Sink();
@@ -33,7 +33,7 @@ namespace Flow.Tests
         public void Flow_WhenTestingEventPublished_ExpectEventReceived3()
         {
             bool received = false;
-            new Step<int>(() => new State<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
+            new Step<int>(() => new StepResult<int, TestingEventReceiver>(default, new StateData<TestingEventReceiver>(new TestingEventReceiver(() => received = true))))
                 .Publish((x, er) => er.Receive(new TestingEvent()))
                 .Finalize(x => x)
                 .Project(x => x)
