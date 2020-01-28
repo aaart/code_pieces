@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public class StateData<TEventReceiver>
+    public class StepState<TEventReceiver>
     {
-        public StateData(TEventReceiver eventReceiver)
+        public StepState(TEventReceiver eventReceiver)
             : this(eventReceiver, (e, er) => { }, new List<IFilteringError>(), null, false)
         {
             
         }
         
-        public StateData(TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone)
+        public StepState(TEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone)
             : this(eventReceiver, onStateDone, new List<IFilteringError>(), null, false)
         {
             
         }
 
-        protected  internal StateData(
+        protected  internal StepState(
             TEventReceiver eventReceiver, 
             Action<IEnumerable<IFilteringError>, TEventReceiver> onStateDone, 
             List<IFilteringError> filteringErrors, 
