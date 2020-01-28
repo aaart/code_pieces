@@ -9,7 +9,7 @@ namespace Flow.Tests
         public class TestingStepResult : StepResult<int, BlackholeEventReceiver>
         {
             public TestingStepResult(Action<IEnumerable<IFilteringError>, BlackholeEventReceiver> onStateDone)
-                : base(0, new StateData<BlackholeEventReceiver>(new BlackholeEventReceiver(), onStateDone))
+                : base(0, new StepState<BlackholeEventReceiver>(new BlackholeEventReceiver(), onStateDone))
             {
             }
 

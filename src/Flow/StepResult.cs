@@ -6,11 +6,11 @@ namespace Flow
     public class StepResult<TEventReceiver> : IState
         where TEventReceiver : IEventReceiver
     {
-        protected internal StepResult(StateData<TEventReceiver> stateData)
+        protected internal StepResult(StepState<TEventReceiver> stepState)
         {
-            Data = stateData;
+            Data = stepState;
         }
-        protected StateData<TEventReceiver> Data { get; }
+        protected StepState<TEventReceiver> Data { get; }
 
         IEventReceiver IState.EventReceiver => Data.EventReceiver;
         public IEnumerable<IFilteringError> FilteringErrors => Data.FilteringErrors;
@@ -33,8 +33,8 @@ namespace Flow
     public class StepResult<T, TEventReceiver> : StepResult<TEventReceiver>, IState<T>
         where TEventReceiver : IEventReceiver
     {
-        public StepResult(T result, StateData<TEventReceiver> stateData)
-            : base(stateData)
+        public StepResult(T result, StepState<TEventReceiver> stepState)
+            : base(stepState)
         {
             Result = result;
         }
