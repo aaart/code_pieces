@@ -6,5 +6,9 @@
             where TE : IEvent
         {
         }
+
+        public void Dispose()
+        {
+        }
     }
 }
