@@ -10,7 +10,7 @@ namespace Flow.Tests
         {
             bool received = false;
             new Step<int>(() => new State<int>(default, new StateData(new TestingEventReceiver(() => received = true, () => { }))))
-                .Publish((x, er) => er.Receive(new TestingEvent()))
+                .Raise(x => new TestingEvent())
                 .Finalize(x => { })
                 .Sink();
 
@@ -22,7 +22,7 @@ namespace Flow.Tests
         {
             bool received = false;
             new Step<int>(() => new State<int>(default, new StateData(new TestingEventReceiver(() => received = true, () => { }))))
-                .Publish((x, er) => er.Receive(new TestingEvent()))
+                .Raise(x => new TestingEvent())
                 .Finalize(x => x)
                 .Sink();
             
@@ -34,7 +34,7 @@ namespace Flow.Tests
         {
             bool received = false;
             new Step<int>(() => new State<int>(default, new StateData(new TestingEventReceiver(() => received = true, () => { }))))
-                .Publish((x, er) => er.Receive(new TestingEvent()))
+                .Raise(x => new TestingEvent())
                 .Finalize(x => x)
                 .Project(x => x)
                 .Sink();

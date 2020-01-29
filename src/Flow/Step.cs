@@ -2,7 +2,7 @@
 
 namespace Flow
 {
-    public class Step<T> : IFlow<T>, IValidatedVerified<T>
+    public class Step<T> : IFlow<T>, IValidatedVerified<T>, IEventSource<T>
     {
         private readonly Func<IState<T>> _method;
         
@@ -37,11 +37,11 @@ namespace Flow
 
         public IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply) =>
             Clone(() => _method.Decorate(state => apply(state.Result)));
-
-        public IValidatedVerified<T> Publish(Action<T, IEventReceiver> publishingMethod) =>
+        
+        public IValidatedVerified<T> Raise(Func<T, IEvent> func) =>
             Clone(() => _method.Decorate(state =>
             {
-                publishingMethod(state.Result, state.EventReceiver);
+                state.EventReceiver.Receive(func(state.Result));
                 return state.Result;
             }));
 
