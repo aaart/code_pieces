@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public abstract class LatePublishEventReceiver : IEventReceiver, IDisposable
+    public abstract class LatePublishEventReceiver : IEventReceiver
     {
         private readonly List<IEvent> _events = new List<IEvent>();
 
