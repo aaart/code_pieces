@@ -4,6 +4,6 @@ namespace Flow
 {
     public interface IEventSource<out T>
     {
-        IValidatedVerified<T> Raise(Action<T, IEventReceiver> raise);
+        IValidatedVerified<T> Raise(Func<T, IEvent> func);
     }
 }
