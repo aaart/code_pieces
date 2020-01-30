@@ -10,12 +10,6 @@ namespace Flow
         {
             
         }
-        
-        public StateData(IEventReceiver eventReceiver, Action<IEnumerable<IFilteringError>, IEventReceiver> onStateDone)
-            : this(eventReceiver, new List<IFilteringError>(), null, false)
-        {
-            
-        }
 
         protected  internal StateData(
             IEventReceiver eventReceiver,
