@@ -7,10 +7,10 @@ namespace Flow
     public interface IState
     {
         bool Failed { get; }
-        IState Skip();
+        bool Invalid { get; }
         IState Fail();
-        void PublishFilteringError(IFilteringError filteringError);
-        void PublishException(Exception exception);
+        IState Fail(Exception exception);
+        IState Fail(IFilteringError filteringError);
         IEnumerable<IFilteringError> FilteringErrors { get; }
         Exception Exception { get; }
         IEventReceiver EventReceiver { get; }
@@ -21,9 +21,9 @@ namespace Flow
     {
         IState Next();
         IState<TR> Next<TR>(TR result);
-        IState<TR> Skip<TR>();
         IState<TR> Fail<TR>();
-
+        IState<TR> Fail<TR>(Exception exception);
+        new IState<T> Fail(IFilteringError filteringError);
         T Result { get; }
     }
 }

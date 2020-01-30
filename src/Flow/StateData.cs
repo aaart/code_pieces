@@ -33,6 +33,8 @@ namespace Flow
         public List<IFilteringError> FilteringErrors { get; }
         public Exception Exception { get; set; }
         public bool Failed { get; set; }
+        public bool Invalid { get; set; }
+
         public void Dispose()
         {
             EventReceiver.Dispose();
