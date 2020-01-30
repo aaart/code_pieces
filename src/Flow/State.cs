@@ -14,19 +14,19 @@ namespace Flow
         IEventReceiver IState.EventReceiver => Data.EventReceiver;
         public IEnumerable<IFilteringError> FilteringErrors => Data.FilteringErrors;
         public Exception Exception => Data.Exception;
-        public bool Failed => Data.Failed;
+        public bool Broken => Data.Broken;
         public bool Invalid => Data.Invalid;
 
         public IState Fail()
         {
-            Data.Failed = true;
+            Data.Broken = true;
             return this;
         }
 
         public IState Fail(Exception exception)
         {
             Data.Exception = exception;
-            Data.Failed = true;
+            Data.Broken = true;
             return this;
         }
 
@@ -54,14 +54,14 @@ namespace Flow
 
         public IState<TR> Fail<TR>()
         {
-            Data.Failed = true;
+            Data.Broken = true;
             return new State<TR>(default, Data);
         }
 
         public IState<TR> Fail<TR>(Exception exception)
         {
             Data.Exception = exception;
-            Data.Failed = true;
+            Data.Broken = true;
             return new State<TR>(default, Data);
         }
 

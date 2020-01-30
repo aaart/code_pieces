@@ -6,7 +6,7 @@ namespace Flow
 
     public interface IState
     {
-        bool Failed { get; }
+        bool Broken { get; }
         bool Invalid { get; }
         IState Fail();
         IState Fail(Exception exception);

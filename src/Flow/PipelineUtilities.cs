@@ -10,7 +10,7 @@ namespace Flow
         public static bool Execute<T>(this Func<IState<T>> step, out IState<T> state)
         {
             state = step();
-            return !state.Invalid && !state.Failed;
+            return !state.Invalid && !state.Broken;
         }
 
         public static IState Decorate<T>(this Func<IState<T>> step, Action<IState<T>> target) =>
@@ -25,7 +25,7 @@ namespace Flow
             try
             {
                 TK target = transform(state.Result);
-                if (!state.Failed && !filter.Check(target, out IFilteringError error))
+                if (!state.Broken && !filter.Check(target, out IFilteringError error))
                 {
                     return state.Fail(error);
                 }
