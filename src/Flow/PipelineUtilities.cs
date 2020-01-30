@@ -19,9 +19,9 @@ namespace Flow
         public static IState<TR> Decorate<T, TR>(this Func<IState<T>> method, Func<IState<T>, TR> target) =>
             method.Execute(out IState<T> state) ? TryCatch(state, target) : state.Fail<TR>();
 
-        public static IState<T> Decorate<T, TK>(this Func<IState<T>> filtering, Func<T, TK> transform, IFilter<TK> filter)
+        public static IState<T> Decorate<T, TK>(this Func<IState<T>> step, Func<T, TK> transform, IFilter<TK> filter)
         {
-            var state = filtering();
+            var state = step();
             try
             {
                 TK target = transform(state.Result);
