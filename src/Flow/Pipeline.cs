@@ -30,7 +30,7 @@ namespace Flow
         public (IPipelineResult<T>, Exception, IFilteringError[]) Sink() =>
             _method().Sink<PipelineResult<T>, IState<T>>((result, state) =>
             {
-                if (!state.FilteringErrors.Any())
+                if (!state.Invalid && !state.Broken)
                 {
                     result.Value = state.Result;
                 }
