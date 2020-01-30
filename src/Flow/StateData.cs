@@ -15,18 +15,18 @@ namespace Flow
             IEventReceiver eventReceiver,
             List<IFilteringError> filteringErrors, 
             Exception exception, 
-            bool failed)
+            bool broken)
         {
             EventReceiver = eventReceiver;
             FilteringErrors = filteringErrors;
             Exception = exception;
-            Failed = failed;
+            Broken = broken;
         }
 
         public IEventReceiver EventReceiver { get; }
         public List<IFilteringError> FilteringErrors { get; }
         public Exception Exception { get; set; }
-        public bool Failed { get; set; }
+        public bool Broken { get; set; }
         public bool Invalid { get; set; }
 
         public void Dispose()
