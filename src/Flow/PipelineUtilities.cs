@@ -10,7 +10,7 @@ namespace Flow
         public static bool Execute<T>(this Func<IState<T>> step, out IState<T> state)
         {
             state = step();
-            return !state.FilteringErrors.Any() && !state.Failed;
+            return !state.Invalid && !state.Failed;
         }
 
         public static IState Decorate<T>(this Func<IState<T>> step, Action<IState<T>> target) =>
@@ -27,15 +27,15 @@ namespace Flow
                 TK target = transform(state.Result);
                 if (!state.Failed && !filter.Check(target, out IFilteringError error))
                 {
-                    state.PublishFilteringError(error);
+                    return state.Fail(error);
                 }
+
+                return state.Next(state.Result);
             }
             catch (Exception ex)
             {
-                state.PublishException(ex);
+                return state.Fail<T>(ex);
             }
-
-            return state;
         }
 
         public static IState TryCatch<T>(IState<T> state, Action<IState<T>> step)
@@ -47,8 +47,7 @@ namespace Flow
             }
             catch (Exception ex)
             {
-                state.PublishException(ex);
-                return state.Next();
+                return state.Fail(ex);
             }
         }
 
@@ -61,8 +60,7 @@ namespace Flow
             }
             catch (Exception ex)
             {
-                state.PublishException(ex);
-                return state.Next(default(TR));
+                return state.Fail<TR>(ex);
             }
         }
 
