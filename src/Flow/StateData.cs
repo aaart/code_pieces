@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public class StateData : IDisposable
+    public class StateData<TFilteringError> : IDisposable
     {
         public StateData(IEventReceiver eventReceiver)
-            : this(eventReceiver, new List<IFilteringError>(), null, false)
+            : this(eventReceiver, new List<TFilteringError>(), null, false)
         {
             
         }
 
         protected  internal StateData(
             IEventReceiver eventReceiver,
-            List<IFilteringError> filteringErrors, 
+            List<TFilteringError> filteringErrors, 
             Exception exception, 
             bool broken)
         {
@@ -24,7 +24,7 @@ namespace Flow
         }
 
         public IEventReceiver EventReceiver { get; }
-        public List<IFilteringError> FilteringErrors { get; }
+        public List<TFilteringError> FilteringErrors { get; }
         public Exception Exception { get; set; }
         public bool Broken { get; set; }
         public bool Invalid { get; set; }

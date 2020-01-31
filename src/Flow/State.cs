@@ -3,34 +3,34 @@ using System.Collections.Generic;
 
 namespace Flow
 {
-    public class State : IState
+    public class State<TFilteringError> : IState<TFilteringError>
     {
-        protected internal State(StateData stateData)
+        protected internal State(StateData<TFilteringError> stateData)
         {
             Data = stateData;
         }
-        protected StateData Data { get; }
+        protected StateData<TFilteringError> Data { get; }
 
-        IEventReceiver IState.EventReceiver => Data.EventReceiver;
-        public IEnumerable<IFilteringError> FilteringErrors => Data.FilteringErrors;
+        IEventReceiver IState<TFilteringError>.EventReceiver => Data.EventReceiver;
+        public IEnumerable<TFilteringError> FilteringErrors => Data.FilteringErrors;
         public Exception Exception => Data.Exception;
         public bool Broken => Data.Broken;
         public bool Invalid => Data.Invalid;
 
-        public IState Fail()
+        public IState<TFilteringError> Fail()
         {
             Data.Broken = true;
             return this;
         }
 
-        public IState Fail(Exception exception)
+        public IState<TFilteringError> Fail(Exception exception)
         {
             Data.Exception = exception;
             Data.Broken = true;
             return this;
         }
 
-        public IState Fail(IFilteringError filteringError)
+        public IState<TFilteringError> Fail(TFilteringError filteringError)
         {
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;
@@ -40,9 +40,9 @@ namespace Flow
         public void Done() => Data.Dispose();
     }
 
-    public class State<T> : State, IState<T>
+    public class State<T, TFilteringError> : State<TFilteringError>, IState<T, TFilteringError>
     {
-        public State(T result, StateData stateData)
+        public State(T result, StateData<TFilteringError> stateData)
             : base(stateData)
         {
             Result = result;
@@ -50,28 +50,28 @@ namespace Flow
 
         public T Result { get; }
         
-        public IState<TR> Next<TR>(TR result) => new State<TR>(result, Data);
+        public IState<TR, TFilteringError> Next<TR>(TR result) => new State<TR, TFilteringError>(result, Data);
 
-        public IState<TR> Fail<TR>()
+        public IState<TR, TFilteringError> Fail<TR>()
         {
             Data.Broken = true;
-            return new State<TR>(default, Data);
+            return new State<TR, TFilteringError>(default, Data);
         }
 
-        public IState<TR> Fail<TR>(Exception exception)
+        public IState<TR, TFilteringError> Fail<TR>(Exception exception)
         {
             Data.Exception = exception;
             Data.Broken = true;
-            return new State<TR>(default, Data);
+            return new State<TR, TFilteringError>(default, Data);
         }
 
-        public new IState<T> Fail(IFilteringError filteringError)
+        public new IState<T, TFilteringError> Fail(TFilteringError filteringError)
         {
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;
             return this;
         }
 
-        public IState Next() => new State(Data);
+        public IState<TFilteringError> Next() => new State<TFilteringError>(Data);
     }
 }

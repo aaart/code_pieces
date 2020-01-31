@@ -1,8 +1,8 @@
 ﻿namespace Flow
 {
-    public class StandardFlowBuilder : IFlowBuilder
+    public class StandardFlowBuilder<TFilteringError> : IFlowBuilder<TFilteringError>
     {
-        public IFlow<T> For<T>(T target) => 
-            new Step<T>(() => new State<T>(target, new StateData(new BlackholeEventReceiver())));
+        public IFlow<T, TFilteringError> For<T>(T target) => 
+            new Step<T, TFilteringError>(() => new State<T, TFilteringError>(target, new StateData<TFilteringError>(new BlackholeEventReceiver())));
     }
 }

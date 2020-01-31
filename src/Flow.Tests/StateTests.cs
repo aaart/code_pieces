@@ -7,10 +7,10 @@ namespace Flow.Tests
 {
     public class StateTests
     {
-        public class TestingState : State<int>
+        public class TestingState : State<int, TestingFilteringError>
         {
             public TestingState(TestingEventReceiver eventReceiver)
-                : base(0, new StateData(eventReceiver))
+                : base(0, new StateData<TestingFilteringError>(eventReceiver))
             {
             }
 
@@ -20,7 +20,7 @@ namespace Flow.Tests
         public void Flow_ExpectStateDone()
         {
             bool done = false;
-            new Step<int>(() => new TestingState(new TestingEventReceiver(() => { }, () => done = true))).Finalize(x => { }).Sink();
+            new Step<int, TestingFilteringError>(() => new TestingState(new TestingEventReceiver(() => { }, () => done = true))).Finalize(x => { }).Sink();
 
             Assert.True(done);
         }

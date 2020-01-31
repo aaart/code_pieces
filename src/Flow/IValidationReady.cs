@@ -3,11 +3,11 @@ using System.Linq.Expressions;
 
 namespace Flow
 {
-    public interface IValidationReady<T>
+    public interface IValidationReady<T, TFilteringError>
     {
-        IFlow<T> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<IFilteringError> error);
-        IFlow<T> Validate(Func<T, bool> validator, Func<IFilteringError> error);
-        IFlow<T> Validate<TR>(Func<T, TR> transform, IFilter<TR> filter);
-        IFlow<T> Validate(IFilter<T> filter);
+        IFlow<T, TFilteringError> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TFilteringError> error);
+        IFlow<T, TFilteringError> Validate(Func<T, bool> validator, Func<TFilteringError> error);
+        IFlow<T, TFilteringError> Validate<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter);
+        IFlow<T, TFilteringError> Validate(IFilter<T, TFilteringError> filter);
     }
 }

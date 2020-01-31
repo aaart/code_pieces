@@ -4,26 +4,26 @@ using System.Collections.Generic;
 namespace Flow
 {
 
-    public interface IState
+    public interface IState<TFilteringError>
     {
         bool Broken { get; }
         bool Invalid { get; }
-        IState Fail();
-        IState Fail(Exception exception);
-        IState Fail(IFilteringError filteringError);
-        IEnumerable<IFilteringError> FilteringErrors { get; }
+        IState<TFilteringError> Fail();
+        IState<TFilteringError> Fail(Exception exception);
+        IState<TFilteringError> Fail(TFilteringError filteringError);
+        IEnumerable<TFilteringError> FilteringErrors { get; }
         Exception Exception { get; }
         IEventReceiver EventReceiver { get; }
         void Done();
     }
 
-    public interface IState<out T> : IState
+    public interface IState<out T, TFilteringError> : IState<TFilteringError>
     {
-        IState Next();
-        IState<TR> Next<TR>(TR result);
-        IState<TR> Fail<TR>();
-        IState<TR> Fail<TR>(Exception exception);
-        new IState<T> Fail(IFilteringError filteringError);
+        IState<TFilteringError> Next();
+        IState<TR, TFilteringError> Next<TR>(TR result);
+        IState<TR, TFilteringError> Fail<TR>();
+        IState<TR, TFilteringError> Fail<TR>(Exception exception);
+        new IState<T, TFilteringError> Fail(TFilteringError filteringError);
         T Result { get; }
     }
 }

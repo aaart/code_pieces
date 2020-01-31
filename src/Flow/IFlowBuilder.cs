@@ -1,7 +1,7 @@
 ﻿namespace Flow
 {
-    public interface IFlowBuilder
+    public interface IFlowBuilder<TFilteringError>
     {
-        IFlow<T> For<T>(T target);
+        IFlow<T, TFilteringError> For<T>(T target);
     }
 }
