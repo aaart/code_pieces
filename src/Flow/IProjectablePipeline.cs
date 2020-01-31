@@ -2,8 +2,8 @@
 
 namespace Flow
 {
-    public interface IProjectablePipeline<T> : IPipeline<T>
+    public interface IProjectablePipeline<T, TFilteringError> : IPipeline<T, TFilteringError>
     {
-        IProjectablePipeline<TR> Project<TR>(Func<T, TR> projection);
+        IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection);
     }
 }

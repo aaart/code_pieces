@@ -7,25 +7,25 @@ namespace Flow
     public static class PipelineUtilities
     {
 
-        public static bool Execute<T>(this Func<IState<T>> step, out IState<T> state)
+        public static bool Execute<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, out IState<T, TFilteringError> state)
         {
             state = step();
             return !state.Invalid && !state.Broken;
         }
 
-        public static IState Decorate<T>(this Func<IState<T>> step, Action<IState<T>> target) =>
-            step.Execute(out IState<T> state) ? TryCatch(state, target) : state.Fail();
+        public static IState<TFilteringError> Decorate<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, Action<IState<T, TFilteringError>> target) =>
+            step.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target) : state.Fail();
 
-        public static IState<TR> Decorate<T, TR>(this Func<IState<T>> method, Func<IState<T>, TR> target) =>
-            method.Execute(out IState<T> state) ? TryCatch(state, target) : state.Fail<TR>();
+        public static IState<TR, TFilteringError> Decorate<T, TR, TFilteringError>(this Func<IState<T, TFilteringError>> method, Func<IState<T, TFilteringError>, TR> target) =>
+            method.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target) : state.Fail<TR>();
 
-        public static IState<T> Decorate<T, TK>(this Func<IState<T>> step, Func<T, TK> transform, IFilter<TK> filter)
+        public static IState<T, TFilteringError> Decorate<T, TK, TFilteringError>(this Func<IState<T, TFilteringError>> step, Func<T, TK> transform, IFilter<TK, TFilteringError> filter)
         {
             var state = step();
             try
             {
                 TK target = transform(state.Result);
-                if (!state.Broken && !filter.Check(target, out IFilteringError error))
+                if (!state.Broken && !filter.Check(target, out TFilteringError error))
                 {
                     return state.Fail(error);
                 }
@@ -38,7 +38,7 @@ namespace Flow
             }
         }
 
-        public static IState TryCatch<T>(IState<T> state, Action<IState<T>> step)
+        public static IState<TFilteringError> TryCatch<T, TFilteringError>(IState<T, TFilteringError> state, Action<IState<T, TFilteringError>> step)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Flow
             }
         }
 
-        public static IState<TR> TryCatch<T, TR>(IState<T> state, Func<IState<T>, TR> step)
+        public static IState<TR, TFilteringError> TryCatch<T, TR, TFilteringError>(IState<T, TFilteringError> state, Func<IState<T, TFilteringError>, TR> step)
         {
             try
             {
@@ -64,9 +64,9 @@ namespace Flow
             }
         }
 
-        public static (T, Exception, IFilteringError[]) Sink<T, TState>(this TState state, Action<T, TState> setup = null)
+        public static (T, Exception, TFilteringError[]) Sink<T, TState, TFilteringError>(this TState state, Action<T, TState> setup = null)
             where T : IPipelineResult, new()
-            where TState : IState
+            where TState : IState<TFilteringError>
         {
             var result = new T();
             setup?.Invoke(result, state);

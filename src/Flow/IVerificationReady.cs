@@ -2,11 +2,11 @@
 
 namespace Flow
 {
-    public interface IVerificationReady<out T>
+    public interface IVerificationReady<out T, TFilteringError>
     {
-        IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<IFilteringError> error);
-        IValidatedVerified<T> Verify(Func<T, bool> check, Func<IFilteringError> error);
-        IValidatedVerified<T> Verify(IFilter<T> filter);
-        IValidatedVerified<T> Verify<TR>(Func<T, TR> transform, IFilter<TR> filter);
+        IValidatedVerified<T, TFilteringError> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<TFilteringError> error);
+        IValidatedVerified<T, TFilteringError> Verify(Func<T, bool> check, Func<TFilteringError> error);
+        IValidatedVerified<T, TFilteringError> Verify(IFilter<T, TFilteringError> filter);
+        IValidatedVerified<T, TFilteringError> Verify<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Flow
 {
-    public interface IEventSource<out T>
+    public interface IEventSource<out T, TFilteringError>
     {
-        IValidatedVerified<T> Raise(Func<T, IEvent> func);
+        IValidatedVerified<T, TFilteringError> Raise(Func<T, IEvent> func);
     }
 }

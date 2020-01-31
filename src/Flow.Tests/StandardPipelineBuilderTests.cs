@@ -1,15 +1,16 @@
 using System;
+using Flow.Tests.TestUtilities;
 using Xunit;
 
 namespace Flow.Tests
 {
     public class StandardPipelineBuilderTests
     {
-        private readonly StandardFlowBuilder _builder;
+        private readonly StandardFlowBuilder<TestingFilteringError> _builder;
 
         public StandardPipelineBuilderTests()
         {
-            _builder = new StandardFlowBuilder();
+            _builder = new StandardFlowBuilder<TestingFilteringError>();
         }
 
         [Fact]

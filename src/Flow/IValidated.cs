@@ -2,10 +2,10 @@
 
 namespace Flow
 {
-    public interface IValidated<out T>
+    public interface IValidated<out T, TFilteringError>
     {
-        IValidatedVerified<TR> Apply<TR>(Func<T, TR> apply);
-        IPipeline Finalize(Action<T> execution);
-        IProjectablePipeline<TR> Finalize<TR>(Func<T, TR> execution);
+        IValidatedVerified<TR, TFilteringError> Apply<TR>(Func<T, TR> apply);
+        IPipeline<TFilteringError> Finalize(Action<T> execution);
+        IProjectablePipeline<TR, TFilteringError> Finalize<TR>(Func<T, TR> execution);
     }
 }

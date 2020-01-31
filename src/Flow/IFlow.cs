@@ -1,6 +1,6 @@
 ﻿namespace Flow
 {
-    public interface IFlow<T> : IValidationReady<T>, IValidated<T>
+    public interface IFlow<T, TFilteringError> : IValidationReady<T, TFilteringError>, IValidated<T, TFilteringError>
     {
         
     }
