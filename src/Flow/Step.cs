@@ -2,7 +2,7 @@
 
 namespace Flow
 {
-    public class Step<T, TFilteringError> : IFlow<T, TFilteringError>, IValidatedVerified<T, TFilteringError>, IEventSource<T, TFilteringError>
+    public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, IValidatedVerified<T, TFilteringError>
     {
         private readonly Func<IState<T, TFilteringError>> _method;
         
