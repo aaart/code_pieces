@@ -5,18 +5,18 @@ namespace Flow.Tests
 {
     public partial class StandardFlowTests
     {
-        private readonly StandardFlowBuilder<TestingFilteringError> _builder;
+        private readonly StandardFlowFactory<TestingFilteringError> _factory;
 
         public StandardFlowTests()
         {
-            _builder = new StandardFlowBuilder<TestingFilteringError>();
+            _factory = new StandardFlowFactory<TestingFilteringError>();
         }
 
         [Fact]
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount()
         {
             int count = 0;
-            _builder
+            _factory
                 .For(new { })
                 .Validate(x =>
                 {
@@ -59,7 +59,7 @@ namespace Flow.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
         {
             int count = 0;
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(new { })
                 .Validate(x =>
                 {
@@ -99,7 +99,7 @@ namespace Flow.Tests
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
@@ -110,7 +110,7 @@ namespace Flow.Tests
         public void DefultInt_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithIntDefaultResult()
         {
             var input = default(int);
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -121,7 +121,7 @@ namespace Flow.Tests
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
             var input = 1;
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -132,7 +132,7 @@ namespace Flow.Tests
         public void DefaultIntAppliedOne_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 1;
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(0)
                 .Apply(x => applied)
                 .Finalize(x => x)
@@ -144,7 +144,7 @@ namespace Flow.Tests
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 2;
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -157,7 +157,7 @@ namespace Flow.Tests
         public void DefaultIn_WhenApplicationChangesType_ExpectSuccessWithEmptyString()
         {
             var applied = string.Empty;
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -169,7 +169,7 @@ namespace Flow.Tests
         [Fact]
         public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
         {
-            var (result, _, _) = _builder
+            var (result, _, _) = _factory
                 .For(0)
                 .Apply(x => x + 2)
                 .Apply(x => x.ToString())

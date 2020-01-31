@@ -9,7 +9,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, exception, _) = _factory
                 .For(default(int))
                 .Finalize(x =>
                 {
@@ -24,7 +24,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenFinalize2ThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, exception, _) = _factory
                 .For(default(int))
                 .Finalize(x => throw new Exception())
                 .Sink();
@@ -35,7 +35,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, exception, _) = _factory
                 .For(default(int))
                 .Finalize(x => x)
                 .Project(x =>
@@ -51,7 +51,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenValidateThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, exception, _) = _factory
                 .For(default(int))
                 .Validate(x =>
                 {
@@ -67,7 +67,7 @@ namespace Flow.Tests
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, exception, _) = _factory
                 .For(default(int))
                 .Apply(x => x)
                 .Verify(x =>

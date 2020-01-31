@@ -6,17 +6,17 @@ namespace Flow.Tests
 {
     public class StandardPipelineBuilderTests
     {
-        private readonly StandardFlowBuilder<TestingFilteringError> _builder;
+        private readonly StandardFlowFactory<TestingFilteringError> _factory;
 
         public StandardPipelineBuilderTests()
         {
-            _builder = new StandardFlowBuilder<TestingFilteringError>();
+            _factory = new StandardFlowFactory<TestingFilteringError>();
         }
 
         [Fact]
         public void NewPipelineBuilder_ExpectPipelineReturned()
         {
-            Assert.NotNull(_builder.For(new object()));
+            Assert.NotNull(_factory.For(new object()));
         }
     }
 }
