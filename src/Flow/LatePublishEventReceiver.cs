@@ -7,10 +7,7 @@ namespace Flow
     {
         private readonly List<IEvent> _events = new List<IEvent>();
 
-        public void Receive<TE>(TE e) where TE : IEvent
-        {
-            _events.Add(e);
-        }
+        public abstract void Receive<TE>(TE e) where TE : IEvent;
 
         protected abstract void PublishAll(IEnumerable<IEvent> events);
 
