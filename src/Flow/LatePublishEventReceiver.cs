@@ -7,7 +7,9 @@ namespace Flow
     {
         private readonly List<Action> _publishers = new List<Action>();
 
-        public abstract void Receive<TEvent>(TEvent e);
+        public void Receive<TEvent>(TEvent e) => _publishers.Add(CreatePublisher(e));
+
+        protected abstract Action CreatePublisher<TEvent>(TEvent e);
 
         protected void PublishAll(List<Action> publishers) => publishers.ForEach(publisher => publisher());
 
