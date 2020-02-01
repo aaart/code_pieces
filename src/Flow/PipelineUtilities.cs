@@ -27,7 +27,7 @@ namespace Flow
                 TK target = transform(state.Result);
                 if (!state.Broken && !filter.Check(target, out TFilteringError error))
                 {
-                    return state.Fail(error);
+                    return state.Invalidate(error);
                 }
 
                 return state.Next(state.Result);
