@@ -30,7 +30,7 @@ namespace Flow
             return this;
         }
 
-        public IState<TFilteringError> Fail(TFilteringError filteringError)
+        public IState<TFilteringError> Invalidate(TFilteringError filteringError)
         {
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;
@@ -65,7 +65,7 @@ namespace Flow
             return new State<TR, TFilteringError>(default, Data);
         }
 
-        public new IState<T, TFilteringError> Fail(TFilteringError filteringError)
+        public new IState<T, TFilteringError> Invalidate(TFilteringError filteringError)
         {
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;

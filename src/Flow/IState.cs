@@ -10,7 +10,7 @@ namespace Flow
         bool Invalid { get; }
         IState<TFilteringError> Fail();
         IState<TFilteringError> Fail(Exception exception);
-        IState<TFilteringError> Fail(TFilteringError filteringError);
+        IState<TFilteringError> Invalidate(TFilteringError filteringError);
         IEnumerable<TFilteringError> FilteringErrors { get; }
         Exception Exception { get; }
         IEventReceiver EventReceiver { get; }
@@ -23,7 +23,7 @@ namespace Flow
         IState<TR, TFilteringError> Next<TR>(TR result);
         IState<TR, TFilteringError> Fail<TR>();
         IState<TR, TFilteringError> Fail<TR>(Exception exception);
-        new IState<T, TFilteringError> Fail(TFilteringError filteringError);
+        new IState<T, TFilteringError> Invalidate(TFilteringError filteringError);
         T Result { get; }
     }
 }
