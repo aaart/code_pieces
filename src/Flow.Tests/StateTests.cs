@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Flow.Tests.TestUtilities;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Flow.Tests
@@ -10,7 +11,7 @@ namespace Flow.Tests
         public class TestingState : State<int, TestingFilteringError>
         {
             public TestingState(TestingEventReceiver eventReceiver)
-                : base(0, new StateData<TestingFilteringError>(eventReceiver))
+                : base(0, new StateData<TestingFilteringError>(NullLogger.Instance, eventReceiver))
             {
             }
 

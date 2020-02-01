@@ -1,4 +1,5 @@
 ﻿using Flow.Tests.TestUtilities;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Flow.Tests
@@ -9,7 +10,7 @@ namespace Flow.Tests
 
         public StandardFlowTests()
         {
-            _factory = new StandardFlowFactory<TestingFilteringError>();
+            _factory = new StandardFlowFactory<TestingFilteringError>(NullLoggerFactory.Instance);
         }
 
         [Fact]
