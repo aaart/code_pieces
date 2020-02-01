@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Flow.Tests
 {
-    public class FlowEventsTests
+    public class NotyfingFlowTests_Events
     {
         [Fact]
         public void Flow_WhenTestingEventPublished_ExpectEventReceived1()

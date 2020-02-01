@@ -1,6 +1,6 @@
 ﻿namespace Flow.Tests.TestUtilities
 {
-    public class TestingEvent : IEvent
+    public class TestingEvent
     {
         
     }

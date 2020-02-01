@@ -13,14 +13,8 @@ namespace Flow.Tests.TestUtilities
             _onDisposing = onDisposing;
         }
 
-        public void Receive<TE>(TE e) where TE : IEvent
-        {
-            _onReceived();
-        }
+        public void Receive<TE>(TE e) => _onReceived();
 
-        public void Dispose()
-        {
-            _onDisposing();
-        }
+        public void Dispose() => _onDisposing();
     }
 }
