@@ -5,15 +5,12 @@ namespace Flow
 {
     public abstract class LatePublishEventReceiver : IEventReceiver
     {
-        private readonly List<IEvent> _events = new List<IEvent>();
+        private readonly List<Action> _publishers = new List<Action>();
 
-        public abstract void Receive<TE>(TE e) where TE : IEvent;
+        public abstract void Receive<TEvent>(TEvent e);
 
-        protected abstract void PublishAll(IEnumerable<IEvent> events);
+        protected void PublishAll(List<Action> publishers) => publishers.ForEach(publisher => publisher());
 
-        public void Dispose()
-        {
-            PublishAll(_events);
-        }
+        public void Dispose() => PublishAll(_publishers);
     }
 }

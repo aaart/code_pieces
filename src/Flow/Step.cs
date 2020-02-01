@@ -38,7 +38,7 @@ namespace Flow
         public IValidatedVerified<TR, TFilteringError> Apply<TR>(Func<T, TR> apply) =>
             Clone(() => _method.Decorate(state => apply(state.Result)));
         
-        public IValidatedVerified<T, TFilteringError> Raise(Func<T, IEvent> func) =>
+        public IValidatedVerified<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func) =>
             Clone(() => _method.Decorate(state =>
             {
                 state.EventReceiver.Receive(func(state.Result));

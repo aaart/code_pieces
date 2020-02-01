@@ -2,8 +2,7 @@
 {
     public class BlackholeEventReceiver : IEventReceiver
     {
-        public void Receive<TE>(TE e) 
-            where TE : IEvent
+        public void Receive<TEvent>(TEvent e) 
         {
         }
 

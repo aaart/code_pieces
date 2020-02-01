@@ -4,7 +4,6 @@ namespace Flow
 {
     public interface IEventReceiver : IDisposable
     {
-        void Receive<TE>(TE e)
-            where TE : IEvent;
+        void Receive<TEvent>(TEvent e);
     }
 }
