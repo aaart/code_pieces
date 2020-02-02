@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flow
+namespace PipeSharp
 {
     public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, IValidatedVerified<T, TFilteringError>
     {

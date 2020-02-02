@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace Flow
+namespace PipeSharp
 {
     public class StateData<TFilteringError> : IDisposable
     {

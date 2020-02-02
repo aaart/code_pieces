@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flow\Flow.csproj" />
+    <ProjectReference Include="..\Flow\PipeSharp.csproj" />
   </ItemGroup>
 
 </Project>

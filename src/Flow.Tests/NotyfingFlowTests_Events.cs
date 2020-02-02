@@ -1,8 +1,8 @@
-﻿using Flow.Tests.TestUtilities;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using PipeSharp.Tests.TestUtilities;
 using Xunit;
 
-namespace Flow.Tests
+namespace PipeSharp.Tests
 {
     public class NotyfingFlowTests_Events
     {

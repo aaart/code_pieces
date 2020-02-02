@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flow
+namespace PipeSharp
 {
     public abstract class ImmediatePublishEventReceiver : IEventReceiver
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flow
+namespace PipeSharp
 {
     public interface IVerificationReady<out T, TFilteringError>
     {

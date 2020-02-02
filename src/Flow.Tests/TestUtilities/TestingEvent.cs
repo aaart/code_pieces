@@ -1,4 +1,4 @@
-﻿namespace Flow.Tests.TestUtilities
+﻿namespace PipeSharp.Tests.TestUtilities
 {
     public class TestingEvent
     {

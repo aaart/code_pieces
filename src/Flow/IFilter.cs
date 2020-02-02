@@ -1,4 +1,4 @@
-﻿namespace Flow
+﻿namespace PipeSharp
 {
     public interface IFilter<in T, TFilteringError>
     {
