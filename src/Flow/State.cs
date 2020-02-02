@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace Flow
 {
@@ -38,6 +39,13 @@ namespace Flow
         }
 
         public void Done() => Data.Dispose();
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) => 
+            Data.Logger.Log(logLevel, eventId, state, exception, formatter);
+
+        public bool IsEnabled(LogLevel logLevel) => Data.Logger.IsEnabled(logLevel);
+
+        public IDisposable BeginScope<TState>(TState state) => Data.Logger.BeginScope(state);
     }
 
     public class State<T, TFilteringError> : State<TFilteringError>, IState<T, TFilteringError>
