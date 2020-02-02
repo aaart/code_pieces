@@ -1,10 +1,22 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Flow
 {
     public class StandardFlowFactory<TFilteringError> : IFlowFactory<TFilteringError>
     {
+        private readonly ILogger _logger;
         private readonly ILoggerFactory _loggerFactory;
+
+        public StandardFlowFactory()
+        {
+            _logger = NullLogger.Instance;
+        }
+
+        public StandardFlowFactory(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public StandardFlowFactory(ILoggerFactory loggerFactory)
         {
@@ -16,7 +28,7 @@ namespace Flow
                 () => new State<T, TFilteringError>(
                                 target, 
                                 new StateData<TFilteringError>(
-                                    _loggerFactory.CreateLogger(typeof(Step<T, TFilteringError>)), 
+                                    _logger ?? _loggerFactory.CreateLogger<Step<T, TFilteringError>>(), 
                                     new BlackholeEventReceiver())));
     }
 }
