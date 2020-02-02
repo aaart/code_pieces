@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flow
+namespace PipeSharp
 {
     public class LambdaFilter<T, TFilteringError> : IFilter<T, TFilteringError>
     {

@@ -1,4 +1,4 @@
-﻿namespace Flow
+﻿namespace PipeSharp
 {
     public class BlackholeEventReceiver : IEventReceiver
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Flow
+namespace PipeSharp
 {
     public abstract class LatePublishEventReceiver : IEventReceiver
     {

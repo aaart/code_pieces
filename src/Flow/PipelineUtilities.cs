@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Flow
+namespace PipeSharp
 {
     public static class PipelineUtilities
     {

@@ -1,8 +1,8 @@
 ﻿using System;
-using Flow.Tests.TestUtilities;
+using PipeSharp.Tests.TestUtilities;
 using Xunit;
 
-namespace Flow.Tests
+namespace PipeSharp.Tests
 {
     public partial class StandardFlowTests
     {

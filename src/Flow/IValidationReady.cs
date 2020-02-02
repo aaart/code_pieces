@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
 
-namespace Flow
+namespace PipeSharp
 {
     public interface IValidationReady<T, TFilteringError>
     {
