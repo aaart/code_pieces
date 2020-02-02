@@ -6,9 +6,9 @@ namespace Flow
     {
         private readonly ILoggerFactory _loggerFactory;
 
-        public StandardFlowFactory(ILoggerFactory _loggerFactory)
+        public StandardFlowFactory(ILoggerFactory loggerFactory)
         {
-            this._loggerFactory = _loggerFactory;
+            _loggerFactory = loggerFactory;
         }
 
         public IFlow<T, TFilteringError> For<T>(T target) => 
