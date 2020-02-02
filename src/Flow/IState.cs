@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace Flow
 {
 
-    public interface IState<TFilteringError>
+    public interface IState<TFilteringError> : ILogger
     {
         bool Broken { get; }
         bool Invalid { get; }
