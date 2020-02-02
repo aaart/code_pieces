@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeSharp", "Flow\PipeSharp.csproj", "{6566F020-FA95-4B8E-9686-17D92D36CFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeSharp", "PipeSharp\PipeSharp.csproj", "{6566F020-FA95-4B8E-9686-17D92D36CFC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeSharp.Tests", "Flow.Tests\PipeSharp.Tests.csproj", "{AF527AC6-2CB9-4BEA-B81C-EEDF725D8412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeSharp.Tests", "PipeSharp.Tests\PipeSharp.Tests.csproj", "{AF527AC6-2CB9-4BEA-B81C-EEDF725D8412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
