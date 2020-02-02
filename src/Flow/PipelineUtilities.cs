@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Flow
 {
@@ -23,16 +24,20 @@ namespace Flow
             var state = step();
             try
             {
+                state.LogDebug($"Validating {typeof(T)} object.");
                 TK target = transform(state.Result);
                 if (!state.Broken && !filter.Check(target, out TFilteringError error))
                 {
+                    state.LogError($"{typeof(T)} is invalid. {typeof(TFilteringError)} error registered.");
                     return state.Invalidate(error);
                 }
-
+                state.LogDebug("Validated");
                 return state.Next(state.Result);
             }
             catch (Exception ex)
             {
+                state.LogError($"An exception was thrown during validation of {typeof(T)}.");
+                state.LogError(ex, ex.Message);
                 return state.Fail<T>(ex);
             }
         }
@@ -41,11 +46,13 @@ namespace Flow
         {
             try
             {
+                state.LogDebug($"Executing step for {typeof(T)}");
                 step(state);
                 return state.Next();
             }
             catch (Exception ex)
             {
+                state.LogError($"An exception was thrown during execution of step for {typeof(T)}.");
                 return state.Fail(ex);
             }
         }
@@ -54,11 +61,13 @@ namespace Flow
         {
             try
             {
+                state.LogDebug($"Executing step for {typeof(T)}");
                 var r = step(state);
                 return state.Next(r);
             }
             catch (Exception ex)
             {
+                state.LogError($"An exception was thrown during execution of step for {typeof(T)}.");
                 return state.Fail<TR>(ex);
             }
         }
@@ -67,6 +76,7 @@ namespace Flow
             where T : IPipelineResult, new()
             where TState : IState<TFilteringError>
         {
+            state.LogDebug("All steps executed. Building result object");
             var result = new T();
             setup?.Invoke(result, state);
             state.Done();

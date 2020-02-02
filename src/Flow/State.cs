@@ -38,7 +38,11 @@ namespace Flow
             return this;
         }
 
-        public void Done() => Data.Dispose();
+        public void Done()
+        {
+            Data.Dispose();
+            this.LogDebug("All operations done.");
+        }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) => 
             Data.Logger.Log(logLevel, eventId, state, exception, formatter);
