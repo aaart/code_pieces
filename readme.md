@@ -66,7 +66,11 @@ public class BookService
             .For((title, published, authorId))
             .Check(x => x.title, t => !string.IsNullOrWhiteSpace(t), () => new TitleError())
             .Check(x => x.published, p => t.Year >= 2000, () => new YearError())
-            .Check(x => x.authorId, aId => _context.Entities<Author>().Count(a => a.Id == aId) == 1, new NoAuthorError())
+            .Check(x => x.authorId,
+                        aId => _context
+                                    .Entities<Author>()
+                                    .Count(a => a.Id == aId) == 1, 
+                        () => new NoAuthorError())
             .Finalize(x => 
             {
                 var newBook = new Book 
