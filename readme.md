@@ -114,7 +114,7 @@ public void CheckFailed_ValidationErrorExpected()
     var (res, ex, filteringErrors) = _factory
         .For("input")
         .Apply(x => 10)
-        .Check(x => x == 0, () new NotZero())
+        .Check(x => x == 0, () => new NotZero())
         .Finalize(x => throw new NotImplementedException())
         .Sink();
     
