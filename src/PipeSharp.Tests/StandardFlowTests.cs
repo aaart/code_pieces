@@ -19,7 +19,7 @@ namespace PipeSharp.Tests
             int count = 0;
             _factory
                 .For(new { })
-                .Validate(x =>
+                .Check(x =>
                 {
                     count++;
                     return count == 1;
@@ -29,12 +29,12 @@ namespace PipeSharp.Tests
                     count++;
                     return x;
                 })
-                .Verify(x =>
+                .Check(x =>
                 {
                     count++;
                     return count == 3;
                 }, () => new TestingFilteringError())
-                .Verify(x =>
+                .Check(x =>
                 {
                     count++;
                     return new { prop = x };
@@ -62,7 +62,7 @@ namespace PipeSharp.Tests
             int count = 0;
             var (result, _, _) = _factory
                 .For(new { })
-                .Validate(x =>
+                .Check(x =>
                 {
                     count++;
                     return true;
@@ -72,12 +72,12 @@ namespace PipeSharp.Tests
                     count++;
                     return x;
                 })
-                .Verify(x =>
+                .Check(x =>
                 {
                     count++;
                     return true;
                 }, () => new TestingFilteringError())
-                .Verify(x =>
+                .Check(x =>
                 {
                     count++;
                     return new { prop = x };
