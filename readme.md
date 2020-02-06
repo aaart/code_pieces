@@ -64,8 +64,8 @@ public class BookService
     {
         var (res, _, _) = _flowFactory
             .For((title, published, authorId))
-            .Validate(x => x.title, t => !string.IsNullOrWhiteSpace(t), () => new TitleError())
-            .Validate(x => x.published, p => t.Year >= 2000, () => new YearError())
+            .Check(x => x.title, t => !string.IsNullOrWhiteSpace(t), () => new TitleError())
+            .Check(x => x.published, p => t.Year >= 2000, () => new YearError())
             .Check(x => x.authorId, aId => _context.Entities<Author>().Count(a => a.Id == aId) == 1, new NoAuthorError())
             .Finalize(x => 
             {
