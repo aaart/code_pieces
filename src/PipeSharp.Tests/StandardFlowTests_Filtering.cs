@@ -236,5 +236,49 @@ namespace PipeSharp.Tests
                 .Sink();
             Assert.False(executed);
         }
+
+        [Fact]
+        public void Flow_WhenCheckingFails_ExpectFailedResult1()
+        {
+            var (res, _, _) = _factory
+                .For(new TestingInput())
+                .Check(x => false, () => new TestingFilteringError())
+                .Finalize(x => x)
+                .Sink();
+            Assert.True(res.Failed);
+        }
+        
+        [Fact]
+        public void Flow_WhenCheckingFails_ExpectFailedResult2()
+        {
+            var (res, _, _) = _factory
+                .For(new TestingInput())
+                .Check(x => false, () => new TestingFilteringError())
+                .Finalize(x => { })
+                .Sink();
+            Assert.True(res.Failed);
+        }
+
+        [Fact]
+        public void Flow_WhenCheckingFails_ExpectNullException1()
+        {
+            var (_, ex, _) = _factory
+                .For(new TestingInput())
+                .Check(x => false, () => new TestingFilteringError())
+                .Finalize(x => x)
+                .Sink();
+            Assert.Null(ex);
+        }
+
+        [Fact]
+        public void Flow_WhenCheckingFails_ExpectNullException2()
+        {
+            var (_, ex, _) = _factory
+                .For(new TestingInput())
+                .Check(x => false, () => new TestingFilteringError())
+                .Finalize(x => { })
+                .Sink();
+            Assert.Null(ex);
+        }
     }
 }
