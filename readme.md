@@ -111,7 +111,7 @@ When you check input or applied changes it does not mean you throw exception:
 
 public void CheckFailed_ValidationErrorExpected()
 {
-    var (res, ex, filteringErrors) _factory
+    var (res, ex, filteringErrors) = _factory
         .For("input")
         .Apply(x => 10)
         .Check(x => x == 0, () new NotZero())
