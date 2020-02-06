@@ -95,7 +95,7 @@ OOTB Exception handling:
 [Fact]
 public void Throw_Catch()
 {
-    var (res, ex, _) _factory
+    var (res, ex, _) = _factory
         .For("input")
         .Finalize(x => throw new NotImplementedException())
         .Sink();
