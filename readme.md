@@ -100,3 +100,23 @@ public void Throw_Catch()
     Assert.IsType<NotImplementedException>(ex);
 }
 ```
+
+When you check input or applied changes it does not mean you throw exception:
+
+```c#
+
+public void CheckFailed_ValidationErrorExpected()
+{
+    var (res, ex, filteringErrors) _factory
+        .For("input")
+        .Apply(x => 10)
+        .Check(x => x == 0, () new NotZero())
+        .Finalize(x => throw new NotImplementedException())
+        .Sink();
+    
+    Assert.True(res.Failed);
+    Assert.IsNull(ex);
+    Assert.Single(filteringErrors);
+}
+
+```
