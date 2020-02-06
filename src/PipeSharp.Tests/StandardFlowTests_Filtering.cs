@@ -10,7 +10,7 @@ namespace PipeSharp.Tests
         {
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
             Assert.Single(filteringErrors);
@@ -21,7 +21,7 @@ namespace PipeSharp.Tests
         {
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Sink();
             Assert.Single(filteringErrors);
@@ -32,7 +32,7 @@ namespace PipeSharp.Tests
         {
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x => false)
                 .Project(x => 1)
                 .Sink();
@@ -45,7 +45,7 @@ namespace PipeSharp.Tests
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
             Assert.Single(filteringErrors);
@@ -57,8 +57,8 @@ namespace PipeSharp.Tests
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingFilteringError())
-                .Verify(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
             Assert.Equal(2, filteringErrors.Length);
@@ -69,8 +69,8 @@ namespace PipeSharp.Tests
         {
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Apply(x => x)
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
@@ -82,10 +82,10 @@ namespace PipeSharp.Tests
         {
             var (_, _, filteringErrors) = _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
             Assert.Equal(2, filteringErrors.Length);
@@ -97,7 +97,7 @@ namespace PipeSharp.Tests
             bool executed = false;
             _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -112,7 +112,7 @@ namespace PipeSharp.Tests
             bool executed = false;
             _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => x, x => false, () => new TestingFilteringError())
+                .Check(x => x, x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -128,7 +128,7 @@ namespace PipeSharp.Tests
             bool executed = false;
             _factory
                 .For(new { Msg = "Mockery" })
-                .Validate(x => new TestingInput(), new TestingFilter())
+                .Check(x => new TestingInput(), new TestingFilter())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -144,7 +144,7 @@ namespace PipeSharp.Tests
             bool executed = false;
             _factory
                 .For(new TestingInput())
-                .Validate(new TestingFilter())
+                .Check(new TestingFilter())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -160,7 +160,7 @@ namespace PipeSharp.Tests
             bool executed = false;
             _factory
                 .For(new { Prop = true })
-                .Validate(x => x.Prop, x => x, () => new TestingFilteringError())
+                .Check(x => x.Prop, x => x, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -176,7 +176,7 @@ namespace PipeSharp.Tests
             _factory
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -193,7 +193,7 @@ namespace PipeSharp.Tests
             _factory
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => x.Msg, x => false, () => new TestingFilteringError())
+                .Check(x => x.Msg, x => false, () => new TestingFilteringError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -210,7 +210,7 @@ namespace PipeSharp.Tests
             _factory
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Verify(x => new TestingInput(), new TestingFilter())
+                .Check(x => new TestingInput(), new TestingFilter())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -227,7 +227,7 @@ namespace PipeSharp.Tests
             _factory
                 .For(new TestingInput())
                 .Apply(x => x)
-                .Verify(new TestingFilter())
+                .Check(new TestingFilter())
                 .Finalize(x =>
                 {
                     executed = true;

@@ -53,7 +53,7 @@ namespace PipeSharp.Tests
         {
             var (_, exception, _) = _factory
                 .For(default(int))
-                .Validate(x =>
+                .Check(x =>
                 {
                     throw new Exception();
                     return true;
@@ -70,7 +70,7 @@ namespace PipeSharp.Tests
             var (_, exception, _) = _factory
                 .For(default(int))
                 .Apply(x => x)
-                .Verify(x =>
+                .Check(x =>
                 {
                     throw new Exception();
                     return true;

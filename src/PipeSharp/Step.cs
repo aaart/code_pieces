@@ -2,7 +2,7 @@
 
 namespace PipeSharp
 {
-    public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, IValidatedVerified<T, TFilteringError>
+    public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, ICheckedAndCheckable<T, TFilteringError>
     {
         private readonly Func<IState<T, TFilteringError>> _method;
         
@@ -11,34 +11,22 @@ namespace PipeSharp
             _method = method;
         }
 
-        public IFlow<T, TFilteringError> Validate<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TFilteringError> error) => 
+        public IFlow<T, TFilteringError> Check<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TFilteringError> error) => 
             Clone(() => _method.Decorate(transform, new LambdaFilter<TR, TFilteringError>(validator, error)));
 
-        public IFlow<T, TFilteringError> Validate(Func<T, bool> validator, Func<TFilteringError> error) => 
+        public IFlow<T, TFilteringError> Check(Func<T, bool> validator, Func<TFilteringError> error) => 
             Clone(() => _method.Decorate(x => x, new LambdaFilter<T, TFilteringError>(validator, error)));
 
-        public IFlow<T, TFilteringError> Validate<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter) => 
+        public IFlow<T, TFilteringError> Check<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter) => 
             Clone(() => _method.Decorate(transform, filter));
 
-        public IFlow<T, TFilteringError> Validate(IFilter<T, TFilteringError> filter) => 
+        public IFlow<T, TFilteringError> Check(IFilter<T, TFilteringError> filter) => 
             Clone(() => _method.Decorate(x => x, filter));
 
-        public IValidatedVerified<T, TFilteringError> Verify<TR>(Func<T, TR> transform, Func<TR, bool> check, Func<TFilteringError> error) => 
-            Clone(() => _method.Decorate(transform, new LambdaFilter<TR, TFilteringError>(check, error)));
-        
-        public IValidatedVerified<T, TFilteringError> Verify(Func<T, bool> check, Func<TFilteringError> error) => 
-            Clone(() => _method.Decorate(x => x, new LambdaFilter<T, TFilteringError>(check, error)));
-
-        public IValidatedVerified<T, TFilteringError> Verify(IFilter<T, TFilteringError> filter) => 
-            Clone(() => _method.Decorate(x => x, filter));
-
-        public IValidatedVerified<T, TFilteringError> Verify<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter) => 
-            Clone(() => _method.Decorate(transform, filter));
-
-        public IValidatedVerified<TR, TFilteringError> Apply<TR>(Func<T, TR> apply) =>
+        public ICheckedAndCheckable<TR, TFilteringError> Apply<TR>(Func<T, TR> apply) =>
             Clone(() => _method.Decorate(state => apply(state.Result)));
         
-        public IValidatedVerified<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func) =>
+        public ICheckedAndCheckable<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func) =>
             Clone(() => _method.Decorate(state =>
             {
                 state.EventReceiver.Receive(func(state.Result));
