@@ -108,7 +108,7 @@ public void Throw_Catch()
 When you check input or applied changes it does not mean you throw exception:
 
 ```c#
-
+[Fact]
 public void CheckFailed_ValidationErrorExpected()
 {
     var (res, ex, filteringErrors) = _factory
