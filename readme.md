@@ -30,7 +30,7 @@ public class BookService
         {
             throw new ArgumentException("I don't like old millennium");
         }
-        if (_context.Entities<Author>().Count(a => a.Id == authorId) == 0)
+        if (_context.Set<Author>().Count(a => a.Id == authorId) == 0)
         {
             throw new KeyNotFoundException("Sorry, given author does not exist");
         }
@@ -68,7 +68,7 @@ public class BookService
             .Check(x => x.published, p => t.Year >= 2000, () => new YearError())
             .Check(x => x.authorId,
                         aId => _context
-                                    .Entities<Author>()
+                                    .Set<Author>()
                                     .Count(a => a.Id == aId) == 1, 
                         () => new NoAuthorError())
             .Finalize(x => 
