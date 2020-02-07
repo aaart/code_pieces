@@ -5,7 +5,7 @@ During my recent work spent generally on developing RESTful APIs, I noticed that
 - taken input is validated
 - if validation fails then API returns error, otherwise:
 - processing moves forward, sometimes fetches more data (like querying DB) and the process verifies if fetched data can be processed with the given input
-- processing is summarized/finalized, operation result is created and sometimes wrapped into a generic object (respose)
+- processing is summarized/finalized, operation result is created and sometimes wrapped into a generic object (response)
 
 To address this scenario, I created simple library that gives you a posibillity to process input like in a pipeline. 
 
