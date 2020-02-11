@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace PipeSharp
 {
@@ -10,10 +11,12 @@ namespace PipeSharp
             _method = method;
         }
 
-        public (IResult, Exception, TFilteringError[]) Sink() => 
-            _method().Sink<Result, IState<TFilteringError>, TFilteringError>((result, state) =>
+        public IPipelineResult<TFilteringError> Sink() =>
+            _method().Sink<PipelineResult<TFilteringError>, IState<TFilteringError>, TFilteringError>((result, state) =>
             {
-                result.Failed = state.Invalid || state.Broken;
+                result.Exception = state.Exception;
+                result.FilteringErrors = state.FilteringErrors.ToArray();
+                result.Result = state.Invalid || state.Broken ? Result.FailedResult() : Result.SuccessResult();
             });
     }
 
@@ -26,20 +29,18 @@ namespace PipeSharp
             _method = method;
         }
 
-        public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) => 
+        public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) =>
             new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result)));
 
-        public (IResult<T>, Exception, TFilteringError[]) Sink() =>
-            _method().Sink<Result<T>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
+        public IPipelineResult<T, TFilteringError> Sink() =>
+            _method().Sink<PipelineResult<T, TFilteringError>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
             {
-                result.Failed = state.Invalid || state.Broken;
-                if (!result.Failed)
-                {
-                    result.Value = state.Result;
-                }
+                result.Exception = state.Exception;
+                result.FilteringErrors = state.FilteringErrors.ToArray();
+                result.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.Result);
             });
 
-        (IResult, Exception, TFilteringError[]) IPipeline<TFilteringError>.Sink()
+        IPipelineResult<TFilteringError> IPipeline<TFilteringError>.Sink()
         {
             return Sink();
         }

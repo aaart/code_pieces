@@ -72,15 +72,15 @@ namespace PipeSharp
             }
         }
 
-        public static (T, Exception, TFilteringError[]) Sink<T, TState, TFilteringError>(this TState state, Action<T, TState> setup = null)
-            where T : IResult, new()
+        public static TPipelineResult Sink<TPipelineResult, TState, TFilteringError>(this TState state, Action<TPipelineResult, TState> setup = null)
+            where TPipelineResult : IPipelineResult<TFilteringError>, new()
             where TState : IState<TFilteringError>
         {
             state.LogDebug("All steps executed. Building result object");
-            var result = new T();
+            var result = new TPipelineResult();
             setup?.Invoke(result, state);
             state.Done();
-            return (result, state.Exception, state.FilteringErrors.ToArray());
+            return result;
         }
     }
 }
