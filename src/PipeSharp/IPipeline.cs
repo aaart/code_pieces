@@ -4,11 +4,11 @@ namespace PipeSharp
 {
     public interface IPipeline<TFilteringError>
     {
-        (IResult, Exception, TFilteringError[]) Sink();
+        IPipelineResult<TFilteringError> Sink();
     }
 
     public interface IPipeline<T, TFilteringError> : IPipeline<TFilteringError>
     {
-        new (IResult<T>, Exception, TFilteringError[]) Sink();
+        new IPipelineResult<T, TFilteringError> Sink();
     }
 }
