@@ -73,7 +73,7 @@ namespace PipeSharp
         }
 
         public static (T, Exception, TFilteringError[]) Sink<T, TState, TFilteringError>(this TState state, Action<T, TState> setup = null)
-            where T : IPipelineResult, new()
+            where T : IResult, new()
             where TState : IState<TFilteringError>
         {
             state.LogDebug("All steps executed. Building result object");

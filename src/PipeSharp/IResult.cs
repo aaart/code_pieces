@@ -1,11 +1,11 @@
 ﻿namespace PipeSharp
 {
-    public interface IPipelineResult
+    public interface IResult
     {
         bool Failed { get; }
     }
 
-    public interface IPipelineResult<out T> : IPipelineResult
+    public interface IResult<out T> : IResult
     {
         T Value { get; }
     }
