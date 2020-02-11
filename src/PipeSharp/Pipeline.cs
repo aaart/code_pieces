@@ -10,8 +10,8 @@ namespace PipeSharp
             _method = method;
         }
 
-        public (IPipelineResult, Exception, TFilteringError[]) Sink() => 
-            _method().Sink<PipelineResult, IState<TFilteringError>, TFilteringError>((result, state) =>
+        public (IResult, Exception, TFilteringError[]) Sink() => 
+            _method().Sink<Result, IState<TFilteringError>, TFilteringError>((result, state) =>
             {
                 result.Failed = state.Invalid || state.Broken;
             });
@@ -29,8 +29,8 @@ namespace PipeSharp
         public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) => 
             new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result)));
 
-        public (IPipelineResult<T>, Exception, TFilteringError[]) Sink() =>
-            _method().Sink<PipelineResult<T>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
+        public (IResult<T>, Exception, TFilteringError[]) Sink() =>
+            _method().Sink<Result<T>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
             {
                 result.Failed = state.Invalid || state.Broken;
                 if (!result.Failed)
@@ -39,7 +39,7 @@ namespace PipeSharp
                 }
             });
 
-        (IPipelineResult, Exception, TFilteringError[]) IPipeline<TFilteringError>.Sink()
+        (IResult, Exception, TFilteringError[]) IPipeline<TFilteringError>.Sink()
         {
             return Sink();
         }
