@@ -81,6 +81,7 @@ public class BookService
                 };
                 _context.Attach(newBook);
                 _context.SaveChanges();
+                return newBook;
             })
             .Project(v => new Result { Value = v })
             .Sink();
