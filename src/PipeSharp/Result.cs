@@ -14,7 +14,7 @@
     public class Result<T> : Result, IResult<T>
     {
         public new static Result<T> FailedResult() => new Result<T> { Failed = true };
-        public new static Result<T> SuccessResult(T val) => new Result<T> { Failed = false, Value = val};
+        public static Result<T> SuccessResult(T val) => new Result<T> { Failed = false, Value = val};
 
         protected Result()
         {
