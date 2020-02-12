@@ -85,7 +85,7 @@ public class BookService
             })
             .Project(v => new Result { Value = v })
             .Sink();
-        return res;
+        return res.Value;
     }
 }
 
