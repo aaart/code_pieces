@@ -7,7 +7,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/aaart/pipesharp</PackageProjectUrl>
     <RepositoryType>GIT</RepositoryType>
-    <Description>A package that decorates toy logic into flow-like structure.
+    <Description>A package that decorates your logic into flow-like structure.
 More information on my github: https://github.com/aaart/pipesharp</Description>
   </PropertyGroup>
 
