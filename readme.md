@@ -91,6 +91,17 @@ public class BookService
 
 ```
 
+Creating new flow:
+```c#
+class FilteringError {} // this class instance should be returned when filter provided to Check method returns false.
+// ....
+IFlowFactory<FilteringError> factory = new StandardFlowFactory<FilteringError>();
+// 2nd contructor: StandardFlowFactory<FilteringError>(Microsoft.Extensions.Logging.ILogger logger);
+// 3rd contructor: StandardFlowFactory<FilteringError>(Microsoft.Extensions.Logging.ILoggerFactory loggerFactory);
+
+factory.For("input").Check(x => false, () => new FilteringError()).Finalize(x => x).Sink();
+```
+
 OOTB Exception handling:
 ```c#
 [Fact]
