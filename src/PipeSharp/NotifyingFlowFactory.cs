@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PipeSharp
@@ -27,12 +28,16 @@ namespace PipeSharp
             _loggerFactory = loggerFactory;
         }
 
-        public INotifyingFlow<T, TFilteringError> For<T>(T target) =>
+        public INotifyingFlow<T, TFilteringError> For<T>(T target) => For(target, () => { }, () => { });
+
+        public INotifyingFlow<T, TFilteringError> For<T>(T target, Action onDoing, Action onDone) =>
             new Step<T, TFilteringError>(
                 () => new State<T, TFilteringError>(
-                    target, 
+                    target,
                     new StateData<TFilteringError>(
-                            _logger ?? _loggerFactory.CreateLogger<Step<T, TFilteringError>>(),
-                            _eventReceiverFactory.Create())));
+                        _logger ?? _loggerFactory.CreateLogger<Step<T, TFilteringError>>(),
+                        _eventReceiverFactory.Create())),
+                onDoing,
+                onDone);
     }
 }

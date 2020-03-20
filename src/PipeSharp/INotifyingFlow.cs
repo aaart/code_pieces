@@ -1,6 +1,6 @@
 ﻿namespace PipeSharp
 {
-    public interface INotifyingFlow<T, TFilteringError> : IFlow<T, TFilteringError>, IEventSource<T, TFilteringError>
+    public interface INotifyingFlow<out T, TFilteringError> : IFlow<T, TFilteringError>, IEventSource<T, TFilteringError>
     {
         
     }
