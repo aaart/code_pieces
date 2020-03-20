@@ -13,11 +13,11 @@ namespace PipeSharp
             return !state.Invalid && !state.Broken;
         }
 
-        public static IState<TFilteringError> Decorate<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, Action<IState<T, TFilteringError>> target) =>
-            step.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target) : state.Fail();
+        public static IState<TFilteringError> Decorate<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, Action<IState<T, TFilteringError>> target, Action onDoing, Action onDone) =>
+            step.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target, onDoing, onDone) : state.Fail();
 
-        public static IState<TR, TFilteringError> Decorate<T, TR, TFilteringError>(this Func<IState<T, TFilteringError>> method, Func<IState<T, TFilteringError>, TR> target) =>
-            method.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target) : state.Fail<TR>();
+        public static IState<TR, TFilteringError> Decorate<T, TR, TFilteringError>(this Func<IState<T, TFilteringError>> method, Func<IState<T, TFilteringError>, TR> target, Action onDoing, Action onDone) =>
+            method.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target, onDoing, onDone) : state.Fail<TR>();
 
         public static IState<T, TFilteringError> Decorate<T, TK, TFilteringError>(this Func<IState<T, TFilteringError>> step, Func<T, TK> transform, IFilter<TK, TFilteringError> filter)
         {
@@ -42,12 +42,14 @@ namespace PipeSharp
             }
         }
 
-        public static IState<TFilteringError> TryCatch<T, TFilteringError>(IState<T, TFilteringError> state, Action<IState<T, TFilteringError>> step)
+        public static IState<TFilteringError> TryCatch<T, TFilteringError>(IState<T, TFilteringError> state, Action<IState<T, TFilteringError>> step, Action onDoing, Action onDone)
         {
             try
             {
                 state.LogDebug($"Executing step for {typeof(T)}");
+                onDoing();
                 step(state);
+                onDone();
                 return state.Next();
             }
             catch (Exception ex)
@@ -57,12 +59,14 @@ namespace PipeSharp
             }
         }
 
-        public static IState<TR, TFilteringError> TryCatch<T, TR, TFilteringError>(IState<T, TFilteringError> state, Func<IState<T, TFilteringError>, TR> step)
+        public static IState<TR, TFilteringError> TryCatch<T, TR, TFilteringError>(IState<T, TFilteringError> state, Func<IState<T, TFilteringError>, TR> step, Action onDoing, Action onDone)
         {
             try
             {
                 state.LogDebug($"Executing step for {typeof(T)}");
+                onDoing();
                 var r = step(state);
+                onDone();
                 return state.Next(r);
             }
             catch (Exception ex)
