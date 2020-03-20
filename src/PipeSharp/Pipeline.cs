@@ -30,7 +30,7 @@ namespace PipeSharp
         }
 
         public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) =>
-            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result)));
+            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result), () => { }, () => { }));
 
         public IPipelineResult<T, TFilteringError> Sink() =>
             _method().Sink<PipelineResult<T, TFilteringError>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
