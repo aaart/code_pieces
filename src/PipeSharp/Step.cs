@@ -4,13 +4,15 @@ namespace PipeSharp
 {
     public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, ICheckedAndCheckable<T, TFilteringError>
     {
-        private readonly Action _onDoing = () => { };
-        private readonly Action _onDone = () => { };
+        private readonly Action _onDoing;
+        private readonly Action _onDone;
         private readonly Func<IState<T, TFilteringError>> _method;
         
-        public Step(Func<IState<T, TFilteringError>> method)
+        public Step(Func<IState<T, TFilteringError>> method, Action onDoing = null, Action onDone = null)
         {
             _method = method;
+            _onDoing = onDoing ?? (() => { });
+            _onDone = onDone ?? (() => { });
         }
 
         public IFlow<T, TFilteringError> Check<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TFilteringError> error) => 
@@ -42,6 +44,6 @@ namespace PipeSharp
             new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => execution(state.Result), _onDoing, _onDone));
 
         
-        private Step<TR, TFilteringError> Clone<TR>(Func<IState<TR, TFilteringError>> method) => new Step<TR, TFilteringError>(method);
+        private Step<TR, TFilteringError> Clone<TR>(Func<IState<TR, TFilteringError>> method) => new Step<TR, TFilteringError>(method, _onDoing, _onDone);
     }
 }
