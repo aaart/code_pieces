@@ -35,7 +35,7 @@ namespace PipeSharp
             {
                 state.EventReceiver.Receive(func(state.Result));
                 return state.Result;
-            }, _onDoing, _onDone));
+            }, () => { }, () => { }));
 
         public IPipeline<TFilteringError> Finalize(Action<T> execution) => 
             new Pipeline<TFilteringError>(() => _method.Decorate(state => execution(state.Result), _onDoing, _onDone));
