@@ -6,17 +6,19 @@ namespace PipeSharp.Tests
 {
     public class StandardPipelineBuilderTests
     {
-        private readonly StandardFlowFactory<TestingFilteringError> _factory;
+        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
 
         public StandardPipelineBuilderTests()
         {
-            _factory = new StandardFlowFactory<TestingFilteringError>(NullLoggerFactory.Instance);
+            _preDefined = new StandardBuilder()
+                .WithFilteringError<TestingFilteringError>()
+                .WithoutEvents();
         }
 
         [Fact]
         public void NewPipelineBuilder_ExpectPipelineReturned()
         {
-            Assert.NotNull(_factory.For(new object()));
+            Assert.NotNull(_preDefined.For(new object()));
         }
     }
 }
