@@ -33,7 +33,7 @@ namespace PipeSharp
                     target,
                     new StateData<TFilteringError>(
                         _logger ?? _loggerFactory.CreateLogger<Step<T, TFilteringError>>(),
-                        new BlackholeEventReceiver())),
+                        new OutNullEventReceiver())),
                 onDoing,
                 onDone);
     }
