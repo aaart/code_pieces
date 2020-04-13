@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public class Pipeline<TFilteringError> : IPipeline<TFilteringError>
     {
@@ -11,8 +11,8 @@ namespace PipeSharp
             _method = method;
         }
 
-        public IPipelineResult<TFilteringError> Sink() =>
-            _method().Sink<PipelineResult<TFilteringError>, IState<TFilteringError>, TFilteringError>((result, state) =>
+        public IPipelineSummary<TFilteringError> Sink() =>
+            _method().Sink<PipelineSummary<TFilteringError>, IState<TFilteringError>, TFilteringError>((result, state) =>
             {
                 result.Exception = state.Exception;
                 result.FilteringErrors = state.FilteringErrors.ToArray();
@@ -30,17 +30,17 @@ namespace PipeSharp
         }
 
         public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) =>
-            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result)));
+            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result), () => { }, () => { }));
 
-        public IPipelineResult<T, TFilteringError> Sink() =>
-            _method().Sink<PipelineResult<T, TFilteringError>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
+        public IPipelineSummary<T, TFilteringError> Sink() =>
+            _method().Sink<PipelineSummary<T, TFilteringError>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
             {
                 result.Exception = state.Exception;
                 result.FilteringErrors = state.FilteringErrors.ToArray();
                 result.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.Result);
             });
 
-        IPipelineResult<TFilteringError> IPipeline<TFilteringError>.Sink()
+        IPipelineSummary<TFilteringError> IPipeline<TFilteringError>.Sink()
         {
             return Sink();
         }

@@ -1,16 +1,18 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using PipeSharp.Tests.TestUtilities;
+﻿using PipeSharp.Tests.TestUtilities;
 using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class NotyfingFlowTests_Events
+    public partial class NotyfingFlowTests
     {
         [Fact]
         public void Flow_WhenTestingEventPublished_ExpectEventReceived1()
         {
             bool received = false;
-            new Step<int, TestingFilteringError>(() => new State<int, TestingFilteringError>(default, new StateData<TestingFilteringError>(NullLogger.Instance, new TestingEventReceiver(() => received = true, () => { }))))
+            INotifyingFlowFactory<TestingFilteringError> factory = 
+                new NotifyingFlowFactory<TestingFilteringError>(new TestingEventReceiverFactory(() => received = true, () => { }));
+
+            factory.For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => { })
                 .Sink();
@@ -22,7 +24,10 @@ namespace PipeSharp.Tests
         public void Flow_WhenTestingEventPublished_ExpectEventReceived2()
         {
             bool received = false;
-            new Step<int, TestingFilteringError>(() => new State<int, TestingFilteringError>(default, new StateData<TestingFilteringError>(NullLogger.Instance, new TestingEventReceiver(() => received = true, () => { }))))
+            INotifyingFlowFactory<TestingFilteringError> factory =
+                new NotifyingFlowFactory<TestingFilteringError>(new TestingEventReceiverFactory(() => received = true, () => { }));
+
+            factory.For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)
                 .Sink();
@@ -34,7 +39,10 @@ namespace PipeSharp.Tests
         public void Flow_WhenTestingEventPublished_ExpectEventReceived3()
         {
             bool received = false;
-            new Step<int, TestingFilteringError>(() => new State<int, TestingFilteringError>(default, new StateData<TestingFilteringError>(NullLogger.Instance, new TestingEventReceiver(() => received = true, () => { }))))
+            INotifyingFlowFactory<TestingFilteringError> factory =
+                new NotifyingFlowFactory<TestingFilteringError>(new TestingEventReceiverFactory(() => received = true, () => { }));
+
+            factory.For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)
                 .Project(x => x)

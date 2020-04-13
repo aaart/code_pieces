@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public class State<TFilteringError> : IState<TFilteringError>
     {

@@ -1,4 +1,4 @@
-﻿namespace PipeSharp
+﻿namespace PipeSharp.Internal
 {
     public class Result : IResult
     {
