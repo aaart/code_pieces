@@ -1,6 +1,6 @@
 ﻿namespace PipeSharp
 {
-    public class BlackholeEventReceiver : IEventReceiver
+    public class OutNullEventReceiver : IEventReceiver
     {
         public void Receive<TEvent>(TEvent e) 
         {
