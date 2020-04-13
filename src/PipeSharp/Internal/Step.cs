@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public class Step<T, TFilteringError> : INotifyingFlow<T, TFilteringError>, ICheckedAndCheckable<T, TFilteringError>
     {

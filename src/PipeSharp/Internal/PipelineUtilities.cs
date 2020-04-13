@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public static class PipelineUtilities
     {
@@ -77,7 +76,7 @@ namespace PipeSharp
         }
 
         public static TPipelineResult Sink<TPipelineResult, TState, TFilteringError>(this TState state, Action<TPipelineResult, TState> setup = null)
-            where TPipelineResult : IPipelineResult<TFilteringError>, new()
+            where TPipelineResult : IPipelineSummary<TFilteringError>, new()
             where TState : IState<TFilteringError>
         {
             state.LogDebug("All steps executed. Building result object");
