@@ -3,16 +3,20 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class NotyfingFlowTests
+    public partial class NotifyingFlowTests
     {
         [Fact]
         public void Flow_WhenOnDoingDefined_ExpectOnDoingNotRaised()
         {
-            INotifyingFlowFactory<TestingFilteringError> factory =
-                new NotifyingFlowFactory<TestingFilteringError>(new TestingEventReceiverFactory(() => { }, () => { }));
             int onDoingCount = 0;
+            var preDefined =
+                new StandardBuilder()
+                    .WithFilteringError<TestingFilteringError>()
+                    .OnDoing(() => onDoingCount++)
+                    .WithEvents(new TestingEventReceiverFactory(() => { }, () => { }));
+            
 
-            factory.For(default(int), () => onDoingCount++, () => { })
+            preDefined.For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => { })
                 .Sink();

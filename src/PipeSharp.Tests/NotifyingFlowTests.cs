@@ -2,7 +2,7 @@
 
 namespace PipeSharp.Tests
 {
-    public partial class NotyfingFlowTests
+    public partial class NotifyingFlowTests
     {
     }
 }

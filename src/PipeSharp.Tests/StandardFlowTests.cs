@@ -1,23 +1,24 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using PipeSharp.Tests.TestUtilities;
+﻿using PipeSharp.Tests.TestUtilities;
 using Xunit;
 
 namespace PipeSharp.Tests
 {
     public partial class StandardFlowTests
     {
-        private readonly StandardFlowFactory<TestingFilteringError> _factory;
+        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
 
         public StandardFlowTests()
         {
-            _factory = new StandardFlowFactory<TestingFilteringError>(NullLoggerFactory.Instance);
+            _preDefined = new StandardBuilder()
+                .WithFilteringError<TestingFilteringError>()
+                .WithoutEvents();
         }
 
         [Fact]
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount()
         {
             int count = 0;
-            _factory
+            _preDefined
                 .For(new { })
                 .Check(x =>
                 {
@@ -60,7 +61,7 @@ namespace PipeSharp.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
         {
             int count = 0;
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(new { })
                 .Check(x =>
                 {
@@ -100,7 +101,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
@@ -111,7 +112,7 @@ namespace PipeSharp.Tests
         public void DefultInt_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithIntDefaultResult()
         {
             var input = default(int);
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -122,7 +123,7 @@ namespace PipeSharp.Tests
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
             var input = 1;
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
@@ -133,7 +134,7 @@ namespace PipeSharp.Tests
         public void DefaultIntAppliedOne_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 1;
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(0)
                 .Apply(x => applied)
                 .Finalize(x => x)
@@ -145,7 +146,7 @@ namespace PipeSharp.Tests
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 2;
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -158,7 +159,7 @@ namespace PipeSharp.Tests
         public void DefaultIn_WhenApplicationChangesType_ExpectSuccessWithEmptyString()
         {
             var applied = string.Empty;
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
@@ -170,7 +171,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
         {
-            var (result, _, _) = _factory
+            var (result, _, _) = _preDefined
                 .For(0)
                 .Apply(x => x + 2)
                 .Apply(x => x.ToString())
