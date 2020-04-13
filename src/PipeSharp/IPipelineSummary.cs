@@ -2,7 +2,7 @@
 
 namespace PipeSharp
 {
-    public interface IPipelineResult<TFilteringError>
+    public interface IPipelineSummary<TFilteringError>
     {
         IResult Result { get; }
         Exception Exception { get; }
@@ -11,7 +11,7 @@ namespace PipeSharp
         void Deconstruct(out IResult result, out Exception exception, out TFilteringError[] errors);
     }
 
-    public interface IPipelineResult<T, TFilteringError> : IPipelineResult<TFilteringError>
+    public interface IPipelineSummary<T, TFilteringError> : IPipelineSummary<TFilteringError>
     {
         new IResult<T> Result { get; }
         void Deconstruct(out IResult<T> result, out Exception exception, out TFilteringError[] errors);

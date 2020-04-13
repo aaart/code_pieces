@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
+using PipeSharp.Internal;
 using PipeSharp.Tests.TestUtilities;
 using Xunit;
 
