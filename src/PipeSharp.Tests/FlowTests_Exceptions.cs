@@ -4,8 +4,17 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class StandardFlowTests
+    public class FlowTests_Exceptions
     {
+        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
+
+        public FlowTests_Exceptions()
+        {
+            _preDefined = new StandardBuilder()
+                .WithFilteringError<TestingFilteringError>()
+                .WithoutEvents();
+        }
+
         [Fact]
         public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
@@ -79,6 +88,23 @@ namespace PipeSharp.Tests
                 .Sink();
 
             Assert.NotNull(exception);
+        }
+        
+        [Fact]
+        public void StandardFlow_WhenVerifyThrowsException_DefaultResultReturned()
+        {
+            var (summary, _, _) = _preDefined
+                .For(default(int))
+                .Apply(x => x)
+                .Check(x =>
+                {
+                    throw new Exception();
+                    return true;
+                }, () => new TestingFilteringError())
+                .Finalize(x => true)
+                .Sink();
+
+            Assert.False(summary.Value);
         }
     }
 }

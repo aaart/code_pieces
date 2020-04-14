@@ -3,8 +3,18 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class StandardFlowTests
+    public partial class FlowTests_Filtering
     {
+
+        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
+
+        public FlowTests_Filtering()
+        {
+            _preDefined = new StandardBuilder()
+                .WithFilteringError<TestingFilteringError>()
+                .WithoutEvents();
+        }
+
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult()
         {

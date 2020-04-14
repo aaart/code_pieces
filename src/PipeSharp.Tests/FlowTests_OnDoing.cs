@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class StandardFlowTests
+    public class FlowTests_OnDoing
     {
         [Fact]
         public void GivenFlow_WhenOnlyFinalizeDefined_ExpectSingleOnDoing()
