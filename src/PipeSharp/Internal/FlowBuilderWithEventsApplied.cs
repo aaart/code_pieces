@@ -3,14 +3,14 @@ using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
-    public class NotifyingFlowPreDefined<TFilteringError> : INotifyingFlowPreDefined<TFilteringError>
+    public class FlowBuilderWithEventsApplied<TFilteringError> : IFlowBuilderWithEventsApplied<TFilteringError>
     {
         private readonly IEventReceiverFactory _eventReceiverFactory;
         private readonly ILogger _logger;
         private readonly Action _onDoing;
         private readonly Action _onDone;
 
-        public NotifyingFlowPreDefined(ILogger logger, IEventReceiverFactory eventReceiverFactory, Action onDoing, Action onDone)
+        public FlowBuilderWithEventsApplied(ILogger logger, IEventReceiverFactory eventReceiverFactory, Action onDoing, Action onDone)
         {
             _logger = logger;
             _eventReceiverFactory = eventReceiverFactory;

@@ -17,56 +17,58 @@ namespace PipeSharp
         {
             Logger = logger;
         }
+        
+        protected ILogger Logger { get; }
+        
+        public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>(Logger);
+    }
 
-        protected StandardBuilder(ILogger logger, List<Action> onDoing, List<Action> onDone)
-            : this(logger)
+    public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilder<TFilteringError>, IFlowBuilderWithEventsApplied<TFilteringError>
+    {
+        private IEventReceiverFactory _eventReceiverFactory = new OutNullEventReceiverFactory();
+
+        internal StandardBuilder(ILogger logger)
+            : base(logger)
         {
-            OnDoingMethods.AddRange(onDoing);
-            OnDoneMethods.AddRange(onDone);
         }
+
 
         protected List<Action> OnDoingMethods { get; } = new List<Action>();
         protected List<Action> OnDoneMethods { get; } = new List<Action>();
-        protected ILogger Logger { get; }
-
-        public IFlowBuilder OnDoing(Action onDoing)
+        public IFlowBuilder<TFilteringError> OnDoing(Action onDoing)
         {
             OnDoingMethods.Add(onDoing);
             return this;
         }
 
-        public IFlowBuilder OnDone(Action onDone)
+        public IFlowBuilder<TFilteringError> OnDone(Action onDone)
         {
             OnDoneMethods.Add(onDone);
             return this;
         }
 
-        public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>(Logger, OnDoingMethods, OnDoneMethods);
-    }
-
-    public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilder<TFilteringError>
-    {
-        internal StandardBuilder(ILogger logger, List<Action> onDoing, List<Action> onDone)
-            : base(logger, onDoing, onDone)
+        public IFlowBuilderWithEventsApplied<TFilteringError> WithEvents(IEventReceiverFactory eventReceiverFactory)
         {
+            _eventReceiverFactory = eventReceiverFactory;
+            return this;
         }
 
-        public new IFlowBuilder<TFilteringError> OnDoing(Action onDoing) => (IFlowBuilder<TFilteringError>)base.OnDoing(onDoing);
+        public IFlow<T, TFilteringError> For<T>(T target) => CreateFirstStep(target);
 
-        public new IFlowBuilder<TFilteringError> OnDone(Action onDone) => (IFlowBuilder<TFilteringError>)base.OnDone(onDone);
+        INotifyingFlow<T, TFilteringError> IFlowBuilderWithEventsApplied<TFilteringError>.For<T>(T target) => CreateFirstStep(target);
 
-        public IFlowPreDefined<TFilteringError> WithoutEvents() =>
-            new StandardFlowPreDefined<TFilteringError>(Logger, Combine(OnDoingMethods), Combine(OnDoneMethods));
-
-        public INotifyingFlowPreDefined<TFilteringError> WithEvents(IEventReceiverFactory eventReceiverFactory) =>
-            new NotifyingFlowPreDefined<TFilteringError>(Logger, eventReceiverFactory, Combine(OnDoingMethods), Combine(OnDoneMethods));
+        private Step<T, TFilteringError> CreateFirstStep<T>(T target) =>
+            new Step<T, TFilteringError>(
+                () => new State<T, TFilteringError>(target, new StateData<TFilteringError>(Logger, _eventReceiverFactory.Create())),
+                Combine(OnDoingMethods),
+                Combine(OnDoneMethods));
 
         private static Action Combine(List<Action> actions) => () =>
+        {
+            foreach (Action action in actions)
             {
-                foreach (Action action in actions)
-                {
-                    action();
-                }
-            };
+                action();
+            }
+        };
     }
 }

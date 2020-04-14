@@ -5,13 +5,12 @@ namespace PipeSharp.Tests
 {
     public class FlowTests_General
     {
-        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
+        private readonly IFlowBuilder<TestingFilteringError> _preDefined;
 
         public FlowTests_General()
         {
             _preDefined = new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
-                .WithoutEvents();
+                .WithFilteringError<TestingFilteringError>();
         }
 
         [Fact]

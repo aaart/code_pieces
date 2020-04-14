@@ -6,19 +6,18 @@ namespace PipeSharp.Tests
 {
     public class StandardBuilderTests
     {
-        private readonly IFlowPreDefined<TestingFilteringError> _preDefined;
+        private readonly IFlowBuilder<TestingFilteringError> _builder;
 
         public StandardBuilderTests()
         {
-            _preDefined = new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
-                .WithoutEvents();
+            _builder = new StandardBuilder()
+                .WithFilteringError<TestingFilteringError>();
         }
 
         [Fact]
         public void NewPipelineBuilder_ExpectPipelineReturned()
         {
-            Assert.NotNull(_preDefined.For(new object()));
+            Assert.NotNull(_builder.For(new object()));
         }
     }
 }
