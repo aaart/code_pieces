@@ -18,6 +18,13 @@ namespace PipeSharp
             Logger = logger;
         }
 
+        protected StandardBuilder(ILogger logger, List<Action> onDoing, List<Action> onDone)
+            : this(logger)
+        {
+            OnDoingMethods.AddRange(onDoing);
+            OnDoneMethods.AddRange(onDone);
+        }
+
         protected List<Action> OnDoingMethods { get; } = new List<Action>();
         protected List<Action> OnDoneMethods { get; } = new List<Action>();
         protected ILogger Logger { get; }
@@ -34,12 +41,13 @@ namespace PipeSharp
             return this;
         }
 
-        public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>();
+        public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>(Logger, OnDoingMethods, OnDoneMethods);
     }
 
     public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilder<TFilteringError>
     {
-        internal StandardBuilder()
+        internal StandardBuilder(ILogger logger, List<Action> onDoing, List<Action> onDone)
+            : base(logger, onDoing, onDone)
         {
         }
 
