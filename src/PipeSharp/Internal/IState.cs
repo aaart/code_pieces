@@ -25,6 +25,6 @@ namespace PipeSharp.Internal
         IState<TR, TFilteringError> Fail<TR>();
         IState<TR, TFilteringError> Fail<TR>(Exception exception);
         new IState<T, TFilteringError> Invalidate(TFilteringError filteringError);
-        T Result { get; }
+        T StepResult { get; }
     }
 }
