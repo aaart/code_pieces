@@ -24,14 +24,14 @@ namespace PipeSharp.Internal
             try
             {
                 state.LogDebug($"Validating {typeof(T)} object.");
-                TK target = transform(state.Result);
+                TK target = transform(state.StepResult);
                 if (!state.Broken && !filter.Check(target, out TFilteringError error))
                 {
                     state.LogError($"{typeof(T)} is invalid. {typeof(TFilteringError)} error registered.");
                     return state.Invalidate(error);
                 }
                 state.LogDebug("Validated");
-                return state.Next(state.Result);
+                return state.Next(state.StepResult);
             }
             catch (Exception ex)
             {

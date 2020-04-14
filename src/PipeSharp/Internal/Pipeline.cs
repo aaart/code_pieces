@@ -30,19 +30,16 @@ namespace PipeSharp.Internal
         }
 
         public IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection) =>
-            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.Result), () => { }, () => { }));
+            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => projection(state.StepResult), () => { }, () => { }));
 
         public IPipelineSummary<T, TFilteringError> Sink() =>
             _method().Sink<PipelineSummary<T, TFilteringError>, IState<T, TFilteringError>, TFilteringError>((result, state) =>
             {
                 result.Exception = state.Exception;
                 result.FilteringErrors = state.FilteringErrors.ToArray();
-                result.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.Result);
+                result.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.StepResult);
             });
 
-        IPipelineSummary<TFilteringError> IPipeline<TFilteringError>.Sink()
-        {
-            return Sink();
-        }
+        IPipelineSummary<TFilteringError> IPipeline<TFilteringError>.Sink() => Sink();
     }
 }

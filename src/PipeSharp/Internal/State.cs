@@ -57,10 +57,10 @@ namespace PipeSharp.Internal
         public State(T result, StateData<TFilteringError> stateData)
             : base(stateData)
         {
-            Result = result;
+            StepResult = result;
         }
 
-        public T Result { get; }
+        public T StepResult { get; }
         
         public IState<TR, TFilteringError> Next<TR>(TR result) => new State<TR, TFilteringError>(result, Data);
 
