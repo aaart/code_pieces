@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public class LambdaFilter<T, TFilteringError> : IFilter<T, TFilteringError>
     {

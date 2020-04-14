@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using PipeSharp.Internal;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
     public class NotifyingFlowPreDefined<TFilteringError> : INotifyingFlowPreDefined<TFilteringError>
     {
