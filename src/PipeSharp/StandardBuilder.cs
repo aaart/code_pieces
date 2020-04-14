@@ -52,6 +52,12 @@ namespace PipeSharp
         public INotifyingFlowPreDefined<TFilteringError> WithEvents(IEventReceiverFactory eventReceiverFactory) =>
             new NotifyingFlowPreDefined<TFilteringError>(Logger, eventReceiverFactory, Combine(OnDoingMethods), Combine(OnDoneMethods));
 
-        private static Action Combine(List<Action> actions) => () => actions.ForEach(x => x());
+        private static Action Combine(List<Action> actions) => () =>
+            {
+                foreach (Action action in actions)
+                {
+                    action();
+                }
+            };
     }
 }
