@@ -9,6 +9,19 @@ During my recent work spent generally on developing RESTful APIs, I noticed that
 
 To address this scenario, I created simple library that gives you a posibillity to process input like in a pipeline. 
 
+First of all you will need to know base error types returned from your code:
+```c#
+public class GenericError // no specific type required, can be struct
+{
+}
+
+//....
+{
+    var _
+}
+
+```
+
 Below you can find a simple code sample that creates new Book entity, with a given title publish date and author (given as author id):
 
 ```c#

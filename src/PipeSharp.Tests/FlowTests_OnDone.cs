@@ -10,14 +10,12 @@ namespace PipeSharp.Tests
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .OnDone(() => onDoneCount++)
                 .WithFilteringError<TestingFilteringError>()
                 .OnDone(() => onDoneCount++)
-                .WithoutEvents()
                 .For(default(int))
                 .Finalize(x => { })
                 .Sink();
-            Assert.Equal(2, onDoneCount);
+            Assert.Equal(1, onDoneCount);
         }
 
         [Fact]
@@ -25,10 +23,8 @@ namespace PipeSharp.Tests
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .OnDone(() => onDoneCount++)
                 .WithFilteringError<TestingFilteringError>()
                 .OnDone(() => onDoneCount++)
-                .WithoutEvents()
                 .For(default(int))
                 .Apply(x => x)
                 .Apply(x => x)
@@ -41,7 +37,7 @@ namespace PipeSharp.Tests
                 .Apply(x => x)
                 .Finalize(x => { })
                 .Sink();
-            Assert.Equal(20, onDoneCount);
+            Assert.Equal(10, onDoneCount);
         }
 
         [Fact]
@@ -49,15 +45,13 @@ namespace PipeSharp.Tests
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .OnDone(() => onDoneCount++)
                 .WithFilteringError<TestingFilteringError>()
                 .OnDone(() => onDoneCount++)
-                .WithoutEvents()
                 .For(default(int))
                 .Check(x => true, () => new TestingFilteringError())
                 .Finalize(x => { })
                 .Sink();
-            Assert.Equal(2, onDoneCount);
+            Assert.Equal(1, onDoneCount);
         }
     }
 }
