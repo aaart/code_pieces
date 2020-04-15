@@ -35,13 +35,13 @@ namespace PipeSharp
 
         protected List<Action> OnDoingMethods { get; } = new List<Action>();
         protected List<Action> OnDoneMethods { get; } = new List<Action>();
-        public IFlowBuilder<TFilteringError> OnDoing(Action onDoing)
+        public IFlowBuilder<TFilteringError> OnChanging(Action onDoing)
         {
             OnDoingMethods.Add(onDoing);
             return this;
         }
 
-        public IFlowBuilder<TFilteringError> OnDone(Action onDone)
+        public IFlowBuilder<TFilteringError> OnChanged(Action onDone)
         {
             OnDoneMethods.Add(onDone);
             return this;

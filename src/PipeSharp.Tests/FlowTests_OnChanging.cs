@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class FlowTests_OnDoing
+    public class FlowTests_OnChanging
     {
         [Fact]
         public void GivenFlow_WhenOnlyFinalizeDefined_ExpectSingleOnDoing()
@@ -11,11 +11,13 @@ namespace PipeSharp.Tests
             int onDoingCount = 0;
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .OnDoing(() => onDoingCount++)
+                .OnChanging(() => onDoingCount++)
+                .WithEvents(new TestingEventReceiverFactory(() => onDoingCount++, () => {}))
+                .OnChanging(() => onDoingCount++)
                 .For(default(int))
                 .Finalize(x => {})
                 .Sink();
-            Assert.Equal(1, onDoingCount);
+            Assert.Equal(2, onDoingCount);
         }
         
         [Fact]
@@ -24,7 +26,9 @@ namespace PipeSharp.Tests
             int onDoingCount = 0;
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .OnDoing(() => onDoingCount++)
+                .OnChanging(() => onDoingCount++)
+                .WithEvents(new TestingEventReceiverFactory(() => onDoingCount++, () => { }))
+                .OnChanging(() => onDoingCount++)
                 .For(default(int))
                 .Apply(x => x)
                 .Apply(x => x)
@@ -37,7 +41,7 @@ namespace PipeSharp.Tests
                 .Apply(x => x)
                 .Finalize(x => {})
                 .Sink();
-            Assert.Equal(10, onDoingCount);
+            Assert.Equal(20, onDoingCount);
         }
 
         [Fact]
@@ -46,12 +50,14 @@ namespace PipeSharp.Tests
             int onDoingCount = 0;
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .OnDoing(() => onDoingCount++)
+                .OnChanging(() => onDoingCount++)
+                .WithEvents(new TestingEventReceiverFactory(() => onDoingCount++, () => { }))
+                .OnChanging(() => onDoingCount++)
                 .For(default(int))
                 .Check(x => true, () => new TestingFilteringError())
                 .Finalize(x => { })
                 .Sink();
-            Assert.Equal(1, onDoingCount);
+            Assert.Equal(2, onDoingCount);
         }
     }
 }
