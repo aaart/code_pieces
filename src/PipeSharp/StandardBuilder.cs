@@ -23,7 +23,7 @@ namespace PipeSharp
         public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>(Logger);
     }
 
-    public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilder<TFilteringError>, IFlowBuilderWithEventsApplied<TFilteringError>
+    public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilderWithEventsApplied<TFilteringError>
     {
         private IEventReceiverFactory _eventReceiverFactory = new OutNullEventReceiverFactory();
 
