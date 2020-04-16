@@ -28,20 +28,20 @@ namespace PipeSharp.Internal
             Clone(() => _method.Decorate(x => x, filter));
 
         public ICheckedAndCheckable<TR, TFilteringError> Apply<TR>(Func<T, TR> apply) =>
-            Clone(() => _method.Decorate(state => apply(state.Result), _onDoing, _onDone));
+            Clone(() => _method.Decorate(state => apply(state.StepResult), _onDoing, _onDone));
         
         public ICheckedAndCheckable<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func) =>
             Clone(() => _method.Decorate(state =>
             {
-                state.EventReceiver.Receive(func(state.Result));
-                return state.Result;
+                state.EventReceiver.Receive(func(state.StepResult));
+                return state.StepResult;
             }, () => { }, () => { }));
 
         public IPipeline<TFilteringError> Finalize(Action<T> execution) => 
-            new Pipeline<TFilteringError>(() => _method.Decorate(state => execution(state.Result), _onDoing, _onDone));
+            new Pipeline<TFilteringError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone));
 
         public IProjectablePipeline<TR, TFilteringError> Finalize<TR>(Func<T, TR> execution) => 
-            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => execution(state.Result), _onDoing, _onDone));
+            new Pipeline<TR, TFilteringError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone));
 
         
         private Step<TR, TFilteringError> Clone<TR>(Func<IState<TR, TFilteringError>> method) => new Step<TR, TFilteringError>(method, _onDoing, _onDone);

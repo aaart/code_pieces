@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace PipeSharp
+namespace PipeSharp.Internal
 {
 
     public interface IState<TFilteringError> : ILogger
@@ -25,6 +25,6 @@ namespace PipeSharp
         IState<TR, TFilteringError> Fail<TR>();
         IState<TR, TFilteringError> Fail<TR>(Exception exception);
         new IState<T, TFilteringError> Invalidate(TFilteringError filteringError);
-        T Result { get; }
+        T StepResult { get; }
     }
 }
