@@ -7,7 +7,7 @@ During my recent work spent generally on developing RESTful APIs, I noticed that
 - processing moves forward, sometimes fetches more data (like querying DB) and the process verifies if fetched data can be processed with the given input
 - processing is summarized/finalized, operation result is created and sometimes wrapped into a generic object (response)
 
-To address this scenario, I created simple library that gives you a posibillity to process input like in a pipeline. 
+To address this scenario, I created simple library that gives you a posibillity to process input like a pipeline. 
 
 First of all you will need to know base error types returned from your code:
 ```c#
@@ -17,7 +17,9 @@ public class GenericError // no specific type required, can be struct
 
 //....
 {
-    var _
+    IFlowBuilder<TFilteringError> builder = 
+        new StandardBuilder()
+            .WithFilteringError<TestingFilteringError>();
 }
 
 ```

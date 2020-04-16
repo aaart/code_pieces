@@ -2,8 +2,8 @@
 
 namespace PipeSharp
 {
-    public interface IFlowBuilderWithEventsApplied<TFilteringError> : IOnChangingOnChangedApplier<TFilteringError>
+    public interface IFlowBuilderWithEventsApplied<TFilteringError> : IFlowBuilder<TFilteringError>
     {
-        INotifyingFlow<T, TFilteringError> For<T>(T target);
+        new INotifyingFlow<T, TFilteringError> For<T>(T target);
     }
 }
