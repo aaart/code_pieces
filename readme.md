@@ -19,10 +19,26 @@ public class GenericError // no specific type required, can be struct
 {
     IFlowBuilder<TFilteringError> builder = 
         new StandardBuilder()
-            .WithFilteringError<TestingFilteringError>();
+            .WithFilteringError<GenericError>();
 }
 
 ```
+
+When you know what type of errors your code might return then you can do some tuning:
+
+
+```c#
+builder
+    .OnChanging(() =>
+        {
+            // this lambda would be executed before any Apply() or Finalize() invocation
+        }
+    ).OnChanged(() =>
+        {
+            // this lambda would be executed after any Apply() or Finalize() invocation
+        });
+
+````
 
 Below you can find a simple code sample that creates new Book entity, with a given title publish date and author (given as author id):
 
@@ -68,16 +84,16 @@ With PipeSharp you can write the following code:
 public class BookService
 {
     private DBContext _context;
-    private IFlowFactory _flowFactory;
-    public BookService(DBContext context, IFlowFactory flowFactory)
+    private IFlowBuilder<TFilteringError> _builder;
+    public BookService(DBContext context, IFlowBuilder<TFilteringError> builder)
     {
         _context = context;
-        _flowFactory = flowFactory;
+        _builder = builder;
     }
 
     public Result<Book> Create(string title, DateTime published, int authorId)
     {
-        var (res, _, _) = _flowFactory
+        var (res, _, _) = _builder
             .For((title, published, authorId))
             .Check(x => x.title, t => !string.IsNullOrWhiteSpace(t), () => new TitleError())
             .Check(x => x.published, p => t.Year >= 2000, () => new YearError())
@@ -106,23 +122,12 @@ public class BookService
 
 ```
 
-Creating new flow:
-```c#
-class FilteringError {} // this class instance should be returned when filter provided to Check method returns false.
-// ....
-IFlowFactory<FilteringError> factory = new StandardFlowFactory<FilteringError>();
-// 2nd contructor: StandardFlowFactory<FilteringError>(Microsoft.Extensions.Logging.ILogger logger);
-// 3rd contructor: StandardFlowFactory<FilteringError>(Microsoft.Extensions.Logging.ILoggerFactory loggerFactory);
-
-factory.For("input").Check(x => false, () => new FilteringError()).Finalize(x => x).Sink();
-```
-
 OOTB Exception handling:
 ```c#
 [Fact]
 public void Throw_Catch()
 {
-    var (res, ex, _) = _factory
+    var (res, ex, _) = _builder
         .For("input")
         .Finalize(x => throw new NotImplementedException())
         .Sink();
@@ -138,7 +143,7 @@ When you check input or applied changes it does not mean you throw exception:
 [Fact]
 public void CheckFailed_ValidationErrorExpected()
 {
-    var (res, ex, filteringErrors) = _factory
+    var (res, ex, filteringErrors) = _builder
         .For("input")
         .Apply(x => 10)
         .Check(x => x == 0, () => new NotZero())
@@ -149,5 +154,28 @@ public void CheckFailed_ValidationErrorExpected()
     Assert.IsNull(ex);
     Assert.Single(filteringErrors);
 }
+
+```
+
+You can notify 3rd party components that something happened (but specific integration you need to do on yourself - 
+no integration with any libraries have been done so far)
+
+```c#
+// LatePublishEventReceiver will raise all events when Sink() is done
+// ImmediatePublishEventReceiver will raise event when Raise() is called
+class SampleLatepublishEventReceiver : LatePublishEventReceiver
+{
+    protected virtual Action CreatePublisher<TEvent>(TEvent e) => Console.WriteLine("Hello World!");
+}
+
+// ...
+
+new StandardBuilder()
+    .WithFilteringError<GenericError>()
+    .WithEvents(new GenericEventReceiverFactory<SampleLatepublishEventReceiver>())
+    .For(default(int))
+    .Raise(x => new TestingEvent())
+    .Finalize(x => x)
+    .Sink();
 
 ```
