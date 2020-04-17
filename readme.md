@@ -165,7 +165,7 @@ no integration with any libraries have been done so far)
 // ImmediatePublishEventReceiver will raise event when Raise() is called
 class SampleLatepublishEventReceiver : LatePublishEventReceiver
 {
-    protected virtual Action CreatePublisher<TEvent>(TEvent e) => Console.WriteLine("Hello World!");
+    protected virtual Action CreatePublisher<TEvent>(TEvent e) => () => Console.WriteLine("Hello World!");
 }
 
 // ...
