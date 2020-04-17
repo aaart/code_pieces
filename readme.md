@@ -11,7 +11,7 @@ To address this scenario, I created simple library that gives you a posibillity 
 
 First of all you will need to know base error types returned from your code:
 ```c#
-public class GenericError // no specific type required, can be struct
+public class GenericError // no specific base type required, can be struct
 {
 }
 
