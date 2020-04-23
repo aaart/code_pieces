@@ -158,7 +158,7 @@ public void CheckFailed_ValidationErrorExpected()
 ```
 
 You can notify 3rd party components that something happened (but specific integration you need to do on yourself - 
-no integration with any libraries have been done so far)
+no integration with any libraries has been done so far)
 
 ```c#
 // LatePublishEventReceiver will raise all events when Sink() is done
