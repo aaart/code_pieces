@@ -11,7 +11,7 @@ To address this scenario, I created simple library that gives you a posibillity 
 
 First of all you will need to know base error types returned from your code:
 ```c#
-public class GenericError // no specific type required, can be struct
+public class GenericError // no specific base type required, can be struct
 {
 }
 
@@ -158,14 +158,14 @@ public void CheckFailed_ValidationErrorExpected()
 ```
 
 You can notify 3rd party components that something happened (but specific integration you need to do on yourself - 
-no integration with any libraries have been done so far)
+no integration with any libraries has been done so far)
 
 ```c#
 // LatePublishEventReceiver will raise all events when Sink() is done
 // ImmediatePublishEventReceiver will raise event when Raise() is called
 class SampleLatepublishEventReceiver : LatePublishEventReceiver
 {
-    protected virtual Action CreatePublisher<TEvent>(TEvent e) => Console.WriteLine("Hello World!");
+    protected virtual Action CreatePublisher<TEvent>(TEvent e) => () => Console.WriteLine("Hello World!");
 }
 
 // ...
