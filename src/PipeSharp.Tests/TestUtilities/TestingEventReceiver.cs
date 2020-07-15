@@ -2,7 +2,7 @@
 
 namespace PipeSharp.Tests.TestUtilities
 {
-    public class TestingEventReceiver : IEventReceiver
+    public class TestingEventReceiver : AbstractEventReceiver
     {
         private readonly Action _onReceived;
         private readonly Action _onDisposing;
@@ -13,8 +13,8 @@ namespace PipeSharp.Tests.TestUtilities
             _onDisposing = onDisposing;
         }
 
-        public void Receive<TE>(TE e) => _onReceived();
+        public override void Receive<TE>(TE e) => _onReceived();
 
-        public void Dispose() => _onDisposing();
+        public override void Dispose() => _onDisposing();
     }
 }
