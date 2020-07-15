@@ -2,7 +2,7 @@
 
 namespace PipeSharp
 {
-    public interface IFlowBuilderWithEventsApplied<TFilteringError> : IFlowBuilder<TFilteringError>
+    public interface IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> : IFlowBuilder<TFilteringError>
     {
         new INotifyingFlow<T, TFilteringError> For<T>(T target);
     }

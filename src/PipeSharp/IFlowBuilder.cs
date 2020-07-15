@@ -9,7 +9,7 @@ namespace PipeSharp
 
     public interface IFlowBuilder<TFilteringError> : IOnChangingOnChangedApplier<TFilteringError>
     {
-        IFlowBuilderWithEventsApplied<TFilteringError> WithEvents(IEventReceiverFactory eventReceiverFactory);
+        IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> EnableEventSubscription(ISubscription subscription);
         IFlow<T, TFilteringError> For<T>(T target);
     }
 }
