@@ -14,7 +14,7 @@ namespace PipeSharp.Internal
         IState<TFilteringError> Invalidate(TFilteringError filteringError);
         IEnumerable<TFilteringError> FilteringErrors { get; }
         Exception Exception { get; }
-        IEventReceiver EventReceiver { get; }
+        void Receive<TEvent>(TEvent e);
         void Done();
     }
 
