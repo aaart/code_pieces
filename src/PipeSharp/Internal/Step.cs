@@ -33,7 +33,7 @@ namespace PipeSharp.Internal
         public ICheckedAndCheckable<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func) =>
             Clone(() => _method.Decorate(state =>
             {
-                state.EventReceiver.Receive(func(state.StepResult));
+                state.Receive(func(state.StepResult));
                 return state.StepResult;
             }, () => { }, () => { }));
 

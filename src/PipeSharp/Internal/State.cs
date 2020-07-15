@@ -12,7 +12,6 @@ namespace PipeSharp.Internal
         }
         protected StateData<TFilteringError> Data { get; }
 
-        IEventReceiver IState<TFilteringError>.EventReceiver => Data.EventReceiver;
         public IEnumerable<TFilteringError> FilteringErrors => Data.FilteringErrors;
         public Exception Exception => Data.Exception;
         public bool Broken => Data.Broken;
@@ -36,6 +35,11 @@ namespace PipeSharp.Internal
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;
             return this;
+        }
+
+        public void Receive<TEvent>(TEvent e)
+        {
+            Data.EventReceiver.Receive(e);
         }
 
         public void Done()
