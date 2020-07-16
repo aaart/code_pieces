@@ -6,26 +6,26 @@ namespace PipeSharp.Internal
 {
     public class StateData<TFilteringError> : IDisposable
     {
-        public StateData(ILogger  logger, IEventReceiver eventReceiver)
-            : this(logger, eventReceiver, new List<TFilteringError>(), null, false)
+        public StateData(ILogger  logger, IActiveSubscription activeSubscription)
+            : this(logger, activeSubscription, new List<TFilteringError>(), null, false)
         {
         }
 
         protected  internal StateData(
             ILogger logger,
-            IEventReceiver eventReceiver,
+            IActiveSubscription activeSubscription,
             List<TFilteringError> filteringErrors, 
             Exception exception, 
             bool broken)
         {
             Logger = logger;
-            EventReceiver = eventReceiver;
+            ActiveSubscription = activeSubscription;
             FilteringErrors = filteringErrors;
             Exception = exception;
             Broken = broken;
         }
         public ILogger Logger { get; }
-        public IEventReceiver EventReceiver { get; }
+        public IActiveSubscription ActiveSubscription { get; }
         public List<TFilteringError> FilteringErrors { get; }
         public Exception Exception { get; set; }
         public bool Broken { get; set; }
@@ -33,7 +33,7 @@ namespace PipeSharp.Internal
 
         public void Dispose()
         {
-            EventReceiver.Dispose();
+            ActiveSubscription.Dispose();
         }
     }
 }

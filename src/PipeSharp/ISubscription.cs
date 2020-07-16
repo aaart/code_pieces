@@ -2,6 +2,6 @@
 {
     public interface ISubscription
     {
-        IEventReceiver Subscribe();
+        IActiveSubscription Subscribe();
     }
 }
