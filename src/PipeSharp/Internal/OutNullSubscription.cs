@@ -2,6 +2,6 @@
 {
     public class OutNullSubscription : ISubscription
     {
-        public IEventReceiver Subscribe() => new OutNullEventReceiver();
+        public IActiveSubscription Subscribe() => new OutNullActiveSubscription();
     }
 }

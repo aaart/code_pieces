@@ -39,7 +39,7 @@ namespace PipeSharp.Internal
 
         public void Receive<TEvent>(TEvent e)
         {
-            Data.EventReceiver.Receive(e);
+            Data.ActiveSubscription.Receive(e);
         }
 
         public void Done()

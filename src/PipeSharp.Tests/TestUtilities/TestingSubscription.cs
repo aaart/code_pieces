@@ -13,6 +13,6 @@ namespace PipeSharp.Tests.TestUtilities
             _onDisposing = onDisposing;
         }
 
-        public IEventReceiver Subscribe() => new TestingEventReceiver(_onReceived, _onDisposing);
+        public IActiveSubscription Subscribe() => new TestingEventSubscription(_onReceived, _onDisposing);
     }
 }

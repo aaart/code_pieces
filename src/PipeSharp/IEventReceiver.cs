@@ -2,8 +2,8 @@
 
 namespace PipeSharp
 {
-    public interface IEventReceiver : IDisposable
+    public interface IEventReceiver<in TEvent> : IDisposable
     {
-        void Receive<TEvent>(TEvent e);
+        void Receive(TEvent e);
     }
 }
