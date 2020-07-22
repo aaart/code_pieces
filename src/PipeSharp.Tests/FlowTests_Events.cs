@@ -12,7 +12,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => received = true, () => { }))
+                .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => { })
@@ -28,7 +28,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => received = true, () => { }))
+                .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)
@@ -44,7 +44,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => received = true, () => { }))
+                .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)
@@ -61,7 +61,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => { }, () => disposed = true))
+                .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => { })
@@ -77,7 +77,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => { }, () => disposed = true))
+                .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)
@@ -93,7 +93,7 @@ namespace PipeSharp.Tests
 
             new StandardBuilder()
                 .WithFilteringError<TestingFilteringError>()
-                .WithEvents(new TestingEventReceiverFactory(() => { }, () => disposed = true))
+                .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
                 .Finalize(x => x)

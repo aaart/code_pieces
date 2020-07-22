@@ -2,17 +2,19 @@
 
 namespace PipeSharp.Tests.TestUtilities
 {
-    public class TestingEventReceiverFactory : IEventReceiverFactory
+    public class TestingEventSubscription : IActiveSubscription
     {
         private readonly Action _onReceived;
         private readonly Action _onDisposing;
 
-        public TestingEventReceiverFactory(Action onReceived, Action onDisposing)
+        public TestingEventSubscription(Action onReceived, Action onDisposing)
         {
             _onReceived = onReceived;
             _onDisposing = onDisposing;
         }
 
-        public IEventReceiver Create() => new TestingEventReceiver(_onReceived, _onDisposing);
+        public void Receive<TE>(TE e) => _onReceived();
+
+        public void Dispose() => _onDisposing();
     }
 }
