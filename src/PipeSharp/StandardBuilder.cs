@@ -20,7 +20,7 @@ namespace PipeSharp
         
         protected ILogger Logger { get; }
         
-        public IFlowBuilder<TError> WithFilteringError<TError>() => new StandardBuilder<TError>(Logger);
+        public IFlowBuilder<TError> UseErrorType<TError>() => new StandardBuilder<TError>(Logger);
     }
 
     public class StandardBuilder<TError> : StandardBuilder, IFlowBuilderWithEventSubscriptionEnabled<TError>

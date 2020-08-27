@@ -10,7 +10,7 @@ namespace PipeSharp.Tests
         public FlowTests_General()
         {
             _preDefined = new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>();
+                .UseErrorType<TestingFilteringError>();
         }
 
         [Fact]

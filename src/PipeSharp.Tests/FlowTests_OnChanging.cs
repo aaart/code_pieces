@@ -10,7 +10,7 @@ namespace PipeSharp.Tests
         {
             int onDoingCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => {}))
                 .OnChanging(() => onDoingCount++)
@@ -25,7 +25,7 @@ namespace PipeSharp.Tests
         {
             int onDoingCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => { }))
                 .OnChanging(() => onDoingCount++)
@@ -49,7 +49,7 @@ namespace PipeSharp.Tests
         {
             int onDoingCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => { }))
                 .OnChanging(() => onDoingCount++)

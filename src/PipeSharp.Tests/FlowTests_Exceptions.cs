@@ -11,7 +11,7 @@ namespace PipeSharp.Tests
         public FlowTests_Exceptions()
         {
             _builder = new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>();
+                .UseErrorType<TestingFilteringError>();
         }
 
         [Fact]
