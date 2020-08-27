@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
-    public static class PipelineUtilities
+    internal static class PipelineUtilities
     {
 
         public static bool Execute<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, out IState<T, TFilteringError> state)
