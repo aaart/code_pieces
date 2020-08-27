@@ -35,6 +35,7 @@ namespace PipeSharp
 
         protected List<Action> OnDoingMethods { get; } = new List<Action>();
         protected List<Action> OnDoneMethods { get; } = new List<Action>();
+        protected List<Action<Exception, ILogger>> ExceptionHandlers { get; } = new List<Action<Exception, ILogger>>();
         public IFlowBuilder<TError> OnChanging(Action onDoing)
         {
             OnDoingMethods.Add(onDoing);
@@ -53,21 +54,37 @@ namespace PipeSharp
             return this;
         }
 
+        public IFlowBuilderWithEventSubscriptionEnabled<TError> HandleException(Action<Exception, ILogger> handler)
+        {
+            ExceptionHandlers.Add(handler);
+            return this;
+        }
+
         public IFlow<T, TError> For<T>(T target) => CreateFirstStep(target);
 
         INotifyingFlow<T, TError> IFlowBuilderWithEventSubscriptionEnabled<TError>.For<T>(T target) => CreateFirstStep(target);
+        IFlowBuilder<TError> IFlowBuilder<TError>.HandleException(Action<Exception, ILogger> handler) => HandleException(handler);
 
         private Step<T, TError> CreateFirstStep<T>(T target) =>
             new Step<T, TError>(
                 () => new State<T, TError>(target, new StateData<TError>(Logger, _subscription.Subscribe())),
                 Combine(OnDoingMethods),
-                Combine(OnDoneMethods));
+                Combine(OnDoneMethods),
+                Combine(ExceptionHandlers));
 
         private static Action Combine(List<Action> actions) => () =>
         {
             foreach (Action action in actions)
             {
                 action();
+            }
+        };
+
+        private static Action<Exception, ILogger> Combine(List<Action<Exception, ILogger>> actions) => (ex, logger) =>
+        {
+            foreach (Action<Exception, ILogger> action in actions)
+            {
+                action(ex, logger);
             }
         };
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace PipeSharp
 {
@@ -7,9 +8,10 @@ namespace PipeSharp
         IFlowBuilder<TError> UseErrorType<TError>();
     }
 
-    public interface IFlowBuilder<TFilteringError> : IOnChangingOnChangedApplier<TFilteringError>
+    public interface IFlowBuilder<TError> : IOnChangingOnChangedApplier<TError>
     {
-        IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> EnableEventSubscription(ISubscription subscription);
-        IFlow<T, TFilteringError> For<T>(T target);
+        IFlowBuilderWithEventSubscriptionEnabled<TError> EnableEventSubscription(ISubscription subscription);
+        IFlowBuilder<TError> HandleException(Action<Exception, ILogger> handler);
+        IFlow<T, TError> For<T>(T target);
     }
 }

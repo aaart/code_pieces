@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
     public class Pipeline<TError> : IPipeline<TError>
     {
         private readonly Func<IState<TError>> _method;
+        private readonly Action<Exception, ILogger> _exceptionHandler;
+
         internal Pipeline(Func<IState<TError>> method)
         {
             _method = method;
@@ -23,14 +26,16 @@ namespace PipeSharp.Internal
     public class Pipeline<T, TError> : IProjectablePipeline<T, TError>
     {
         private readonly Func<IState<T, TError>> _method;
+        private readonly Action<Exception, ILogger> _exceptionHandler;
 
-        internal Pipeline(Func<IState<T, TError>> method)
+        internal Pipeline(Func<IState<T, TError>> method, Action<Exception, ILogger> exceptionHandler)
         {
             _method = method;
+            _exceptionHandler = exceptionHandler;
         }
 
         public IProjectablePipeline<TR, TError> Project<TR>(Func<T, TR> projection) =>
-            new Pipeline<TR, TError>(() => _method.Decorate(state => projection(state.StepResult), () => { }, () => { }));
+            new Pipeline<TR, TError>(() => _method.Decorate(state => projection(state.StepResult), () => { }, () => { }, _exceptionHandler), _exceptionHandler);
 
         public IPipelineSummary<T, TError> Sink() =>
             _method().Sink<PipelineSummary<T, TError>, IState<T, TError>, TError>((result, state) =>
