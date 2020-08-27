@@ -23,7 +23,7 @@ namespace PipeSharp
         public IFlowBuilder<TError> UseErrorType<TError>() => new StandardBuilder<TError>(Logger);
     }
 
-    public class StandardBuilder<TError> : StandardBuilder, IFlowBuilderWithEventSubscriptionEnabled<TError>
+    internal class StandardBuilder<TError> : StandardBuilder, IFlowBuilderWithEventSubscriptionEnabled<TError>
     {
         private ISubscription _subscription = new OutNullSubscription();
 
