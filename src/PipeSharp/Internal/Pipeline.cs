@@ -9,9 +9,10 @@ namespace PipeSharp.Internal
         private readonly Func<IState<TError>> _method;
         private readonly Action<Exception, ILogger> _exceptionHandler;
 
-        internal Pipeline(Func<IState<TError>> method)
+        internal Pipeline(Func<IState<TError>> method, Action<Exception, ILogger> exceptionHandler)
         {
             _method = method;
+            _exceptionHandler = exceptionHandler;
         }
 
         public IPipelineSummary<TError> Sink() =>
