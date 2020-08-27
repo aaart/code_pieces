@@ -1,7 +1,7 @@
 ﻿namespace PipeSharp
 {
-    public interface IFilter<in T, TFilteringError>
+    public interface IFilter<in T, TError>
     {
-        bool Check(T target, out TFilteringError filteringError);
+        bool Check(T target, out TError filteringError);
     }
 }

@@ -5,26 +5,26 @@ using Microsoft.Extensions.Logging;
 namespace PipeSharp.Internal
 {
 
-    public interface IState<TFilteringError> : ILogger
+    public interface IState<TError> : ILogger
     {
         bool Broken { get; }
         bool Invalid { get; }
-        IState<TFilteringError> Fail();
-        IState<TFilteringError> Fail(Exception exception);
-        IState<TFilteringError> Invalidate(TFilteringError filteringError);
-        IEnumerable<TFilteringError> FilteringErrors { get; }
+        IState<TError> Fail();
+        IState<TError> Fail(Exception exception);
+        IState<TError> Invalidate(TError filteringError);
+        IEnumerable<TError> FilteringErrors { get; }
         Exception Exception { get; }
         void Receive<TEvent>(TEvent e);
         void Done();
     }
 
-    public interface IState<out T, TFilteringError> : IState<TFilteringError>
+    public interface IState<out T, TError> : IState<TError>
     {
-        IState<TFilteringError> Next();
-        IState<TR, TFilteringError> Next<TR>(TR result);
-        IState<TR, TFilteringError> Fail<TR>();
-        IState<TR, TFilteringError> Fail<TR>(Exception exception);
-        new IState<T, TFilteringError> Invalidate(TFilteringError filteringError);
+        IState<TError> Next();
+        IState<TR, TError> Next<TR>(TR result);
+        IState<TR, TError> Fail<TR>();
+        IState<TR, TError> Fail<TR>(Exception exception);
+        new IState<T, TError> Invalidate(TError filteringError);
         T StepResult { get; }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace PipeSharp
 {
-    public interface IProjectablePipeline<T, TFilteringError> : IPipeline<T, TFilteringError>
+    public interface IProjectablePipeline<T, TError> : IPipeline<T, TError>
     {
-        IProjectablePipeline<TR, TFilteringError> Project<TR>(Func<T, TR> projection);
+        IProjectablePipeline<TR, TError> Project<TR>(Func<T, TR> projection);
     }
 }

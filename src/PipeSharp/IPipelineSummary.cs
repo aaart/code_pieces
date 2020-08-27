@@ -2,18 +2,18 @@
 
 namespace PipeSharp
 {
-    public interface IPipelineSummary<TFilteringError>
+    public interface IPipelineSummary<TError>
     {
         IResult Result { get; }
         Exception Exception { get; }
-        TFilteringError[] FilteringErrors { get; }
+        TError[] FilteringErrors { get; }
 
-        void Deconstruct(out IResult result, out Exception exception, out TFilteringError[] errors);
+        void Deconstruct(out IResult result, out Exception exception, out TError[] errors);
     }
 
-    public interface IPipelineSummary<T, TFilteringError> : IPipelineSummary<TFilteringError>
+    public interface IPipelineSummary<T, TError> : IPipelineSummary<TError>
     {
         new IResult<T> Result { get; }
-        void Deconstruct(out IResult<T> result, out Exception exception, out TFilteringError[] errors);
+        void Deconstruct(out IResult<T> result, out Exception exception, out TError[] errors);
     }
 }

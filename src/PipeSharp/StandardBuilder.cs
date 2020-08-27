@@ -20,10 +20,10 @@ namespace PipeSharp
         
         protected ILogger Logger { get; }
         
-        public IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>() => new StandardBuilder<TFilteringError>(Logger);
+        public IFlowBuilder<TError> WithFilteringError<TError>() => new StandardBuilder<TError>(Logger);
     }
 
-    public class StandardBuilder<TFilteringError> : StandardBuilder, IFlowBuilderWithEventSubscriptionEnabled<TFilteringError>
+    public class StandardBuilder<TError> : StandardBuilder, IFlowBuilderWithEventSubscriptionEnabled<TError>
     {
         private ISubscription _subscription = new OutNullSubscription();
 
@@ -35,31 +35,31 @@ namespace PipeSharp
 
         protected List<Action> OnDoingMethods { get; } = new List<Action>();
         protected List<Action> OnDoneMethods { get; } = new List<Action>();
-        public IFlowBuilder<TFilteringError> OnChanging(Action onDoing)
+        public IFlowBuilder<TError> OnChanging(Action onDoing)
         {
             OnDoingMethods.Add(onDoing);
             return this;
         }
 
-        public IFlowBuilder<TFilteringError> OnChanged(Action onDone)
+        public IFlowBuilder<TError> OnChanged(Action onDone)
         {
             OnDoneMethods.Add(onDone);
             return this;
         }
 
-        public IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> EnableEventSubscription(ISubscription subscription)
+        public IFlowBuilderWithEventSubscriptionEnabled<TError> EnableEventSubscription(ISubscription subscription)
         {
             _subscription = subscription;
             return this;
         }
 
-        public IFlow<T, TFilteringError> For<T>(T target) => CreateFirstStep(target);
+        public IFlow<T, TError> For<T>(T target) => CreateFirstStep(target);
 
-        INotifyingFlow<T, TFilteringError> IFlowBuilderWithEventSubscriptionEnabled<TFilteringError>.For<T>(T target) => CreateFirstStep(target);
+        INotifyingFlow<T, TError> IFlowBuilderWithEventSubscriptionEnabled<TError>.For<T>(T target) => CreateFirstStep(target);
 
-        private Step<T, TFilteringError> CreateFirstStep<T>(T target) =>
-            new Step<T, TFilteringError>(
-                () => new State<T, TFilteringError>(target, new StateData<TFilteringError>(Logger, _subscription.Subscribe())),
+        private Step<T, TError> CreateFirstStep<T>(T target) =>
+            new Step<T, TError>(
+                () => new State<T, TError>(target, new StateData<TError>(Logger, _subscription.Subscribe())),
                 Combine(OnDoingMethods),
                 Combine(OnDoneMethods));
 

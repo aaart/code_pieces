@@ -4,17 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
-    public class StateData<TFilteringError> : IDisposable
+    public class StateData<TError> : IDisposable
     {
         public StateData(ILogger  logger, IActiveSubscription activeSubscription)
-            : this(logger, activeSubscription, new List<TFilteringError>(), null, false)
+            : this(logger, activeSubscription, new List<TError>(), null, false)
         {
         }
 
         protected  internal StateData(
             ILogger logger,
             IActiveSubscription activeSubscription,
-            List<TFilteringError> filteringErrors, 
+            List<TError> filteringErrors, 
             Exception exception, 
             bool broken)
         {
@@ -26,7 +26,7 @@ namespace PipeSharp.Internal
         }
         public ILogger Logger { get; }
         public IActiveSubscription ActiveSubscription { get; }
-        public List<TFilteringError> FilteringErrors { get; }
+        public List<TError> FilteringErrors { get; }
         public Exception Exception { get; set; }
         public bool Broken { get; set; }
         public bool Invalid { get; set; }

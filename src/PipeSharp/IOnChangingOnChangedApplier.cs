@@ -2,9 +2,9 @@
 
 namespace PipeSharp
 {
-    public interface IOnChangingOnChangedApplier<TFilteringError>
+    public interface IOnChangingOnChangedApplier<TError>
     {
-        IFlowBuilder<TFilteringError> OnChanging(Action onDoing);
-        IFlowBuilder<TFilteringError> OnChanged(Action onDone);
+        IFlowBuilder<TError> OnChanging(Action onDoing);
+        IFlowBuilder<TError> OnChanged(Action onDone);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace PipeSharp
 {
-    public interface IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> : IFlowBuilder<TFilteringError>
+    public interface IFlowBuilderWithEventSubscriptionEnabled<TError> : IFlowBuilder<TError>
     {
-        new INotifyingFlow<T, TFilteringError> For<T>(T target);
+        new INotifyingFlow<T, TError> For<T>(T target);
     }
 }

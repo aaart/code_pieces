@@ -4,7 +4,7 @@ namespace PipeSharp
 {
     public interface IFlowBuilder
     {
-        IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>();
+        IFlowBuilder<TError> WithFilteringError<TError>();
     }
 
     public interface IFlowBuilder<TFilteringError> : IOnChangingOnChangedApplier<TFilteringError>

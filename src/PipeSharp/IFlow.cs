@@ -1,6 +1,6 @@
 ﻿namespace PipeSharp
 {
-    public interface IFlow<out T, TFilteringError> : ICheckable<T, TFilteringError>, IChecked<T, TFilteringError>
+    public interface IFlow<out T, TError> : ICheckable<T, TError>, IChecked<T, TError>
     {
         
     }
