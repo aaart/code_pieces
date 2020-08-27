@@ -15,7 +15,7 @@ namespace PipeSharp.Internal
             _method().Sink<PipelineSummary<TError>, IState<TError>, TError>((result, state) =>
             {
                 result.Exception = state.Exception;
-                result.FilteringErrors = state.FilteringErrors.ToArray();
+                result.Errors = state.FilteringErrors.ToArray();
                 result.Result = state.Invalid || state.Broken ? Result.FailedResult() : Result.SuccessResult();
             });
     }
@@ -36,7 +36,7 @@ namespace PipeSharp.Internal
             _method().Sink<PipelineSummary<T, TError>, IState<T, TError>, TError>((result, state) =>
             {
                 result.Exception = state.Exception;
-                result.FilteringErrors = state.FilteringErrors.ToArray();
+                result.Errors = state.FilteringErrors.ToArray();
                 result.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.StepResult);
             });
 

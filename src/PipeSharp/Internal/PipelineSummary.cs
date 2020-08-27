@@ -6,12 +6,12 @@ namespace PipeSharp.Internal
     {
         public IResult Result { get; set; }
         public Exception Exception { get; set; }
-        public TError[] FilteringErrors { get; set; }
+        public TError[] Errors { get; set; }
         public void Deconstruct(out IResult result, out Exception exception, out TError[] errors)
         {
             result = Result;
             exception = Exception;
-            errors = FilteringErrors;
+            errors = Errors;
         }
     }
 
@@ -22,7 +22,7 @@ namespace PipeSharp.Internal
         {
             result = Result;
             exception = Exception;
-            errors = FilteringErrors;
+            errors = Errors;
         }
     }
 }

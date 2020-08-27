@@ -6,7 +6,7 @@ namespace PipeSharp
     {
         IResult Result { get; }
         Exception Exception { get; }
-        TError[] FilteringErrors { get; }
+        TError[] Errors { get; }
 
         void Deconstruct(out IResult result, out Exception exception, out TError[] errors);
     }
