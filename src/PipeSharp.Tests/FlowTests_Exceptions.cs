@@ -22,7 +22,9 @@ namespace PipeSharp.Tests
                 .Finalize(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return x;
+#pragma warning restore 162
                 })
                 .Sink();
 
@@ -49,7 +51,9 @@ namespace PipeSharp.Tests
                 .Project(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return x;
+#pragma warning restore 162
                 })
                 .Sink();
 
@@ -64,7 +68,9 @@ namespace PipeSharp.Tests
                 .Check(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return true;
+#pragma warning restore 162
                 }, () => new TestingFilteringError())
                 .Finalize(x => x)
                 .Sink();
@@ -81,7 +87,9 @@ namespace PipeSharp.Tests
                 .Check(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return true;
+#pragma warning restore 162
                 }, () => new TestingFilteringError())
                 .Finalize(x => x)
                 .Sink();
@@ -98,7 +106,9 @@ namespace PipeSharp.Tests
                 .Check(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return true;
+#pragma warning restore 162
                 }, () => new TestingFilteringError())
                 .Finalize(x => true)
                 .Sink();
@@ -110,14 +120,16 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInCheckMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return true;
+#pragma warning restore 162
                 }, () => new TestingFilteringError())
                 .Finalize(x => true)
                 .Sink();
@@ -129,13 +141,15 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInApplyMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            var (_, _, _) = _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return x;
+#pragma warning restore 162
                 })
                 .Check(x => true, () => new TestingFilteringError())
                 .Finalize(x => true)
@@ -156,7 +170,9 @@ namespace PipeSharp.Tests
                 .Finalize(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return true;
+#pragma warning restore 162
                 })
                 .Sink();
 
@@ -176,7 +192,9 @@ namespace PipeSharp.Tests
                 .Project(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return x;
+#pragma warning restore 162
                 })
                 .Sink();
 
@@ -194,7 +212,9 @@ namespace PipeSharp.Tests
                 .Raise(x =>
                 {
                     throw new Exception();
+#pragma warning disable 162
                     return new TestingEvent();
+#pragma warning restore 162
                 })
                 .Apply(x => x)
                 
@@ -210,7 +230,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionNotThrown_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
