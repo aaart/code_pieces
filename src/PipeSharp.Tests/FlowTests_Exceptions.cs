@@ -28,7 +28,7 @@ namespace PipeSharp.Tests
 
             Assert.NotNull(exception);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenFinalize2ThrowsException_ExceptionReturned()
         {
@@ -39,7 +39,7 @@ namespace PipeSharp.Tests
 
             Assert.NotNull(exception);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
         {
@@ -55,7 +55,7 @@ namespace PipeSharp.Tests
 
             Assert.NotNull(exception);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenValidateThrowsException_ExceptionReturned()
         {
@@ -71,7 +71,7 @@ namespace PipeSharp.Tests
 
             Assert.NotNull(exception);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_ExceptionReturned()
         {
@@ -88,7 +88,7 @@ namespace PipeSharp.Tests
 
             Assert.NotNull(exception);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_DefaultResultReturned()
         {
@@ -111,7 +111,7 @@ namespace PipeSharp.Tests
         {
             bool exceptionHandled = false;
             var (summary, _, _) = _builder
-                .HandleException((ex, logger) => exceptionHandled = true)    
+                .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
@@ -124,13 +124,13 @@ namespace PipeSharp.Tests
 
             Assert.True(exceptionHandled);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInApplyMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
             var (summary, _, _) = _builder
-                .HandleException((ex, logger) => exceptionHandled = true)    
+                .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x =>
                 {
@@ -143,13 +143,13 @@ namespace PipeSharp.Tests
 
             Assert.True(exceptionHandled);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInFinalizeMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
             var (summary, _, _) = _builder
-                .HandleException((ex, logger) => exceptionHandled = true)    
+                .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x => true, () => new TestingFilteringError())
@@ -162,13 +162,13 @@ namespace PipeSharp.Tests
 
             Assert.True(exceptionHandled);
         }
-        
+
         [Fact]
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInProjectMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
             var (summary, _, _) = _builder
-                .HandleException((ex, logger) => exceptionHandled = true)    
+                .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x => true, () => new TestingFilteringError())
@@ -182,13 +182,36 @@ namespace PipeSharp.Tests
 
             Assert.True(exceptionHandled);
         }
-        
+
+        [Fact]
+        public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInRaiseMethod_HandlerExecuted()
+        {
+            bool exceptionHandled = false;
+            var (summary, _, _) = _builder
+                .HandleException((ex, logger) => exceptionHandled = true)
+                .EnableEventSubscription(new TestingSubscription(() => { }, () => { }))
+                .For(default(int))
+                .Raise(x =>
+                {
+                    throw new Exception();
+                    return new TestingEvent();
+                })
+                .Apply(x => x)
+                
+                .Check(x => true, () => new TestingFilteringError())
+                .Finalize(x => true)
+                .Project(x => x)
+                .Sink();
+
+            Assert.True(exceptionHandled);
+        }
+
         [Fact]
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionNotThrown_HandlerExecuted()
         {
             bool exceptionHandled = false;
             var (summary, _, _) = _builder
-                .HandleException((ex, logger) => exceptionHandled = true)    
+                .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x => true, () => new TestingFilteringError())

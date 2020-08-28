@@ -38,7 +38,7 @@ namespace PipeSharp.Internal
             {
                 state.Receive(func(state.StepResult));
                 return state.StepResult;
-            }, () => { }, () => { }, (ex, logger) => { }));
+            }, () => { }, () => { }, _exceptionHandler));
 
         public IPipeline<TError> Finalize(Action<T> execution) => 
             new Pipeline<TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler);
