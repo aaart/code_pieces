@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
@@ -9,13 +10,15 @@ namespace PipeSharp.Internal
         private readonly Action _onDone;
         private readonly Func<IState<T, TError>> _method;
         private readonly Action<Exception, ILogger> _exceptionHandler;
+        private readonly IEnumerable<Func<Exception, TError>> _exceptionToErrorMappers;
 
-        public Step(Func<IState<T, TError>> method, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler)
+        public Step(Func<IState<T, TError>> method, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler, IEnumerable<Func<Exception, TError>> exceptionToErrorMappers)
         {
             _method = method;
             _onDoing = onDoing ?? (() => { });
             _onDone = onDone ?? (() => { });
             _exceptionHandler = exceptionHandler ?? ((ex, logger) => { });
+            _exceptionToErrorMappers = exceptionToErrorMappers;
         }
 
         public IFlow<T, TError> Check<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TError> error) => 
@@ -41,12 +44,12 @@ namespace PipeSharp.Internal
             }, () => { }, () => { }, _exceptionHandler));
 
         public IPipeline<TError> Finalize(Action<T> execution) => 
-            new Pipeline<TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler);
+            new Pipeline<TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler, _exceptionToErrorMappers);
 
         public IProjectablePipeline<TR, TError> Finalize<TR>(Func<T, TR> execution) => 
-            new Pipeline<TR, TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler);
+            new Pipeline<TR, TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler, _exceptionToErrorMappers);
 
         
-        private Step<TR, TError> Clone<TR>(Func<IState<TR, TError>> method) => new Step<TR, TError>(method, _onDoing, _onDone, _exceptionHandler);
+        private Step<TR, TError> Clone<TR>(Func<IState<TR, TError>> method) => new Step<TR, TError>(method, _onDoing, _onDone, _exceptionHandler, _exceptionToErrorMappers);
     }
 }
