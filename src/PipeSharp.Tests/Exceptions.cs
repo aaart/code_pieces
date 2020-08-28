@@ -4,11 +4,11 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class FlowTests_Exceptions
+    public class Exceptions
     {
         private readonly IFlowBuilder<TestingFilteringError> _builder;
 
-        public FlowTests_Exceptions()
+        public Exceptions()
         {
             _builder = new StandardBuilder()
                 .UseErrorType<TestingFilteringError>();

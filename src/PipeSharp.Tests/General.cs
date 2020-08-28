@@ -3,11 +3,11 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class FlowTests_General
+    public class General
     {
         private readonly IFlowBuilder<TestingFilteringError> _preDefined;
 
-        public FlowTests_General()
+        public General()
         {
             _preDefined = new StandardBuilder()
                 .UseErrorType<TestingFilteringError>();

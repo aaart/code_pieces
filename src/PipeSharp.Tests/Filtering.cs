@@ -3,12 +3,12 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class FlowTests_Filtering
+    public partial class Filtering
     {
 
         private readonly IFlowBuilder<TestingFilteringError> _builder;
 
-        public FlowTests_Filtering()
+        public Filtering()
         {
             _builder = new StandardBuilder().UseErrorType<TestingFilteringError>();
         }

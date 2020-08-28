@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class FlowTests_Events
+    public class Events
     {
         [Fact]
         public void Flow_WhenTestingEventPublished_ExpectEventReceived1()
