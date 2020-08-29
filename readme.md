@@ -9,17 +9,19 @@ During my recent work spent generally on developing RESTful APIs, I noticed that
 
 To address this scenario, I created simple library that gives you a posibillity to process input like a pipeline. 
 
-First of all you will need to know base error types returned from your code:
+First of all you will need to know base error type returned from your code:
 ```c#
 public class GenericError // no specific base type required, can be struct
 {
+    public string Message { get; set; }
+    public int SomeCode { get; set; }    
 }
 
 //....
 {
     IFlowBuilder<TFilteringError> builder = 
         new StandardBuilder()
-            .WithFilteringError<GenericError>();
+            .UseErrorType<GenericError>();
 }
 
 ```
@@ -129,7 +131,7 @@ public void Throw_Catch()
 {
     var (res, ex, _) = _builder
         .For("input")
-        .Finalize(x => throw new NotImplementedException())
+        .Finalize(x => { throw new NotImplementedException(); return x; })
         .Sink();
     
     Assert.True(res.Failed);
@@ -143,16 +145,16 @@ When you check input or applied changes it does not mean you throw exception:
 [Fact]
 public void CheckFailed_ValidationErrorExpected()
 {
-    var (res, ex, filteringErrors) = _builder
+    var (res, ex, errors) = _builder
         .For("input")
         .Apply(x => 10)
         .Check(x => x == 0, () => new NotZero())
-        .Finalize(x => throw new NotImplementedException())
+        .Finalize(x => { throw new NotImplementedException(); return x; })
         .Sink();
     
     Assert.True(res.Failed);
     Assert.IsNull(ex);
-    Assert.Single(filteringErrors);
+    Assert.Single(errors);
 }
 
 ```
@@ -171,11 +173,36 @@ class SampleLatepublishEventReceiver : LatePublishEventReceiver
 // ...
 
 new StandardBuilder()
-    .WithFilteringError<GenericError>()
-    .WithEvents(new GenericEventReceiverFactory<SampleLatepublishEventReceiver>())
+    .UseErrorType<GenericError>()
+    .EnableEventSubscription(new GenericEventReceiverFactory<SampleLatepublishEventReceiver>())
     .For(default(int))
     .Raise(x => new TestingEvent())
     .Finalize(x => x)
     .Sink();
 
+```
+
+You can map Exception to your custom error type and deconstruct pipeline result to
+```c#
+var (result, errors)
+```
+instead of
+```c#
+var (result, exception, errors)
+```
+How to map Exception to Error:
+```c#
+public void MapExceptionToErrorExample()
+{
+    var (_, errors) = _builder
+        .MapExceptionToErrorOnDeconstruct(ex => new GenericError { Message = ex.Message, SomeCode = ex.HResult })
+        .For(0)
+        .Finalize(x =>
+        {
+            throw new Exception();
+            return x;
+        })
+        .Sink();
+    Assert.Single(errors);
+}
 ```
