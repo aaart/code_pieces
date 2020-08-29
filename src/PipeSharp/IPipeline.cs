@@ -2,13 +2,13 @@
 
 namespace PipeSharp
 {
-    public interface IPipeline<TFilteringError>
+    public interface IPipeline<TError>
     {
-        IPipelineSummary<TFilteringError> Sink();
+        IPipelineSummary<TError> Sink();
     }
 
-    public interface IPipeline<T, TFilteringError> : IPipeline<TFilteringError>
+    public interface IPipeline<T, TError> : IPipeline<TError>
     {
-        new IPipelineSummary<T, TFilteringError> Sink();
+        new IPipelineSummary<T, TError> Sink();
     }
 }

@@ -4,33 +4,33 @@ using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
-    public class State<TFilteringError> : IState<TFilteringError>
+    public class State<TError> : IState<TError>
     {
-        protected internal State(StateData<TFilteringError> stateData)
+        protected internal State(StateData<TError> stateData)
         {
             Data = stateData;
         }
-        protected StateData<TFilteringError> Data { get; }
+        protected StateData<TError> Data { get; }
 
-        public IEnumerable<TFilteringError> FilteringErrors => Data.FilteringErrors;
+        public IEnumerable<TError> FilteringErrors => Data.FilteringErrors;
         public Exception Exception => Data.Exception;
         public bool Broken => Data.Broken;
         public bool Invalid => Data.Invalid;
 
-        public IState<TFilteringError> Fail()
+        public IState<TError> Fail()
         {
             Data.Broken = true;
             return this;
         }
 
-        public IState<TFilteringError> Fail(Exception exception)
+        public IState<TError> Fail(Exception exception)
         {
             Data.Exception = exception;
             Data.Broken = true;
             return this;
         }
 
-        public IState<TFilteringError> Invalidate(TFilteringError filteringError)
+        public IState<TError> Invalidate(TError filteringError)
         {
             Data.FilteringErrors.Add(filteringError);
             Data.Invalid = true;

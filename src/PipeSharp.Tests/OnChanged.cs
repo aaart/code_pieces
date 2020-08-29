@@ -3,14 +3,14 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public class FlowTests_OnChanged
+    public class OnChanged
     {
         [Fact]
         public void GivenFlow_WhenOnlyFinalizeDefined_ExpectSingleOnDone()
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanged(() => onDoneCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoneCount++, () => { }))
                 .OnChanged(() => onDoneCount++)
@@ -25,7 +25,7 @@ namespace PipeSharp.Tests
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanged(() => onDoneCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoneCount++, () => { }))
                 .OnChanged(() => onDoneCount++)
@@ -49,7 +49,7 @@ namespace PipeSharp.Tests
         {
             int onDoneCount = 0;
             new StandardBuilder()
-                .WithFilteringError<TestingFilteringError>()
+                .UseErrorType<TestingFilteringError>()
                 .OnChanged(() => onDoneCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoneCount++, () => { }))
                 .OnChanged(() => onDoneCount++)

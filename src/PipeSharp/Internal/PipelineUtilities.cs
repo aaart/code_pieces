@@ -3,31 +3,30 @@ using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
 {
-    public static class PipelineUtilities
+    internal static class PipelineUtilities
     {
-
-        public static bool Execute<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, out IState<T, TFilteringError> state)
+        private static bool Execute<T, TError>(this Func<IState<T, TError>> step, out IState<T, TError> state)
         {
             state = step();
             return !state.Invalid && !state.Broken;
         }
 
-        public static IState<TFilteringError> Decorate<T, TFilteringError>(this Func<IState<T, TFilteringError>> step, Action<IState<T, TFilteringError>> target, Action onDoing, Action onDone) =>
-            step.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target, onDoing, onDone) : state.Fail();
+        public static IState<TError> Decorate<T, TError>(this Func<IState<T, TError>> step, Action<IState<T, TError>> target, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler) =>
+            step.Execute(out IState<T, TError> state) ? TryCatch(state, target, onDoing, onDone, exceptionHandler) : state.Fail();
 
-        public static IState<TR, TFilteringError> Decorate<T, TR, TFilteringError>(this Func<IState<T, TFilteringError>> method, Func<IState<T, TFilteringError>, TR> target, Action onDoing, Action onDone) =>
-            method.Execute(out IState<T, TFilteringError> state) ? TryCatch(state, target, onDoing, onDone) : state.Fail<TR>();
+        public static IState<TR, TError> Decorate<T, TR, TError>(this Func<IState<T, TError>> method, Func<IState<T, TError>, TR> target, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler) =>
+            method.Execute(out IState<T, TError> state) ? TryCatch(state, target, onDoing, onDone, exceptionHandler) : state.Fail<TR>();
 
-        public static IState<T, TFilteringError> Decorate<T, TK, TFilteringError>(this Func<IState<T, TFilteringError>> step, Func<T, TK> transform, IFilter<TK, TFilteringError> filter)
+        public static IState<T, TError> Decorate<T, TK, TError>(this Func<IState<T, TError>> step, Func<T, TK> transform, IFilter<TK, TError> filter, Action<Exception, ILogger> exceptionHandler)
         {
             var state = step();
             try
             {
                 state.LogDebug($"Validating {typeof(T)} object.");
                 TK target = transform(state.StepResult);
-                if (!state.Broken && !filter.Check(target, out TFilteringError error))
+                if (!state.Broken && !filter.Check(target, out TError error))
                 {
-                    state.LogError($"{typeof(T)} is invalid. {typeof(TFilteringError)} error registered.");
+                    state.LogError($"{typeof(T)} is invalid. {typeof(TError)} error registered.");
                     return state.Invalidate(error);
                 }
                 state.LogDebug("Validated");
@@ -35,13 +34,12 @@ namespace PipeSharp.Internal
             }
             catch (Exception ex)
             {
-                state.LogError($"An exception was thrown during validation of {typeof(T)}.");
-                state.LogError(ex, ex.Message);
+                exceptionHandler(ex, state);
                 return state.Fail<T>(ex);
             }
         }
 
-        public static IState<TFilteringError> TryCatch<T, TFilteringError>(IState<T, TFilteringError> state, Action<IState<T, TFilteringError>> step, Action onDoing, Action onDone)
+        private static IState<TError> TryCatch<T, TError>(IState<T, TError> state, Action<IState<T, TError>> step, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler)
         {
             try
             {
@@ -53,12 +51,12 @@ namespace PipeSharp.Internal
             }
             catch (Exception ex)
             {
-                state.LogError($"An exception was thrown during execution of step for {typeof(T)}.");
+                exceptionHandler(ex, state);
                 return state.Fail(ex);
             }
         }
 
-        public static IState<TR, TFilteringError> TryCatch<T, TR, TFilteringError>(IState<T, TFilteringError> state, Func<IState<T, TFilteringError>, TR> step, Action onDoing, Action onDone)
+        private static IState<TR, TError> TryCatch<T, TR, TError>(IState<T, TError> state, Func<IState<T, TError>, TR> step, Action onDoing, Action onDone, Action<Exception, ILogger> exceptionHandler)
         {
             try
             {
@@ -70,14 +68,14 @@ namespace PipeSharp.Internal
             }
             catch (Exception ex)
             {
-                state.LogError($"An exception was thrown during execution of step for {typeof(T)}.");
+                exceptionHandler(ex, state);
                 return state.Fail<TR>(ex);
             }
         }
 
-        public static TPipelineResult Sink<TPipelineResult, TState, TFilteringError>(this TState state, Action<TPipelineResult, TState> setup = null)
-            where TPipelineResult : IPipelineSummary<TFilteringError>, new()
-            where TState : IState<TFilteringError>
+        public static TPipelineResult Sink<TPipelineResult, TState, TError>(this TState state, Action<TPipelineResult, TState> setup = null)
+            where TPipelineResult : IPipelineSummary<TError>, new()
+            where TState : IState<TError>
         {
             state.LogDebug("All steps executed. Building result object");
             var result = new TPipelineResult();

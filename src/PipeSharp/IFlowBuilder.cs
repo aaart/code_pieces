@@ -1,15 +1,18 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace PipeSharp
 {
     public interface IFlowBuilder
     {
-        IFlowBuilder<TFilteringError> WithFilteringError<TFilteringError>();
+        IFlowBuilder<TError> UseErrorType<TError>();
     }
 
-    public interface IFlowBuilder<TFilteringError> : IOnChangingOnChangedApplier<TFilteringError>
+    public interface IFlowBuilder<TError> : IOnChangingOnChangedApplier<TError>
     {
-        IFlowBuilderWithEventSubscriptionEnabled<TFilteringError> EnableEventSubscription(ISubscription subscription);
-        IFlow<T, TFilteringError> For<T>(T target);
+        IFlowBuilderWithEventSubscriptionEnabled<TError> EnableEventSubscription(ISubscription subscription);
+        IFlowBuilder<TError> HandleException(Action<Exception, ILogger> handler);
+        IFlowBuilder<TError> MapExceptionToErrorOnDeconstruct(Func<Exception, TError> map);
+        IFlow<T, TError> For<T>(T target);
     }
 }

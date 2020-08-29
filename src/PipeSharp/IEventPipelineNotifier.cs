@@ -2,8 +2,8 @@
 
 namespace PipeSharp
 {
-    public interface IEventPipelineNotifier<out T, TFilteringError>
+    public interface IEventPipelineNotifier<out T, TError>
     {
-        ICheckedAndCheckable<T, TFilteringError> Raise<TEvent>(Func<T, TEvent> func);
+        ICheckedAndCheckable<T, TError> Raise<TEvent>(Func<T, TEvent> func);
     }
 }

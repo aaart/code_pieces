@@ -2,10 +2,10 @@
 
 namespace PipeSharp
 {
-    public interface IChecked<out T, TFilteringError>
+    public interface IChecked<out T, TError>
     {
-        ICheckedAndCheckable<TR, TFilteringError> Apply<TR>(Func<T, TR> apply);
-        IPipeline<TFilteringError> Finalize(Action<T> execution);
-        IProjectablePipeline<TR, TFilteringError> Finalize<TR>(Func<T, TR> execution);
+        ICheckedAndCheckable<TR, TError> Apply<TR>(Func<T, TR> apply);
+        IPipeline<TError> Finalize(Action<T> execution);
+        IProjectablePipeline<TR, TError> Finalize<TR>(Func<T, TR> execution);
     }
 }

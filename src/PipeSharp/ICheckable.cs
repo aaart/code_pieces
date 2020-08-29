@@ -2,11 +2,11 @@
 
 namespace PipeSharp
 {
-    public interface ICheckable<out T, TFilteringError>
+    public interface ICheckable<out T, TError>
     {
-        IFlow<T, TFilteringError> Check<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TFilteringError> error);
-        IFlow<T, TFilteringError> Check(Func<T, bool> validator, Func<TFilteringError> error);
-        IFlow<T, TFilteringError> Check<TR>(Func<T, TR> transform, IFilter<TR, TFilteringError> filter);
-        IFlow<T, TFilteringError> Check(IFilter<T, TFilteringError> filter);
+        IFlow<T, TError> Check<TR>(Func<T, TR> transform, Func<TR, bool> validator, Func<TError> error);
+        IFlow<T, TError> Check(Func<T, bool> validator, Func<TError> error);
+        IFlow<T, TError> Check<TR>(Func<T, TR> transform, IFilter<TR, TError> filter);
+        IFlow<T, TError> Check(IFilter<T, TError> filter);
     }
 }
