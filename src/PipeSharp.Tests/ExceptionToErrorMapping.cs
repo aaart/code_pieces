@@ -64,5 +64,16 @@ namespace PipeSharp.Tests
                 .Sink();
             Assert.Empty(errors);
         }
+
+        [Fact]
+        public void StandardFlow_WhenExceptionNotThrownAndNoErrors_ExpectValidResult()
+        {
+            var (result, _) = _builder
+                .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
+                .For(0)
+                .Finalize(x => x)
+                .Sink();
+            Assert.False(result.Failed);
+        }
     }
 }
