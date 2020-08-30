@@ -13,7 +13,7 @@ namespace PipeSharp.Internal
         public void Deconstruct(out IResult result, out TError[] errors)
         {
             result = Result;
-            errors = Errors.Union(ExceptionToErrorMappers.Select(map => map(Exception))).ToArray();
+            errors = Exception != null ? Errors.Union(ExceptionToErrorMappers.Select(m => m(Exception))).ToArray() : Errors;
         }
 
         public void Deconstruct(out IResult result, out Exception exception, out TError[] errors)
@@ -30,7 +30,7 @@ namespace PipeSharp.Internal
         public void Deconstruct(out IResult<T> result, out TError[] errors)
         {
             result = Result;
-            errors = Errors.Union(ExceptionToErrorMappers.Select(m => m(Exception))).ToArray();
+            errors = Exception != null ? Errors.Union(ExceptionToErrorMappers.Select(m => m(Exception))).ToArray() : Errors;
         }
 
         public void Deconstruct(out IResult<T> result, out Exception exception, out TError[] errors)
