@@ -34,7 +34,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenExceptionThrownAndNoErrorRaisedAndDeconstructedTo3_ExpectException()
         {
-            var (_, exception, _) = _builder
+            var (_, _, exception, _) = _builder
                 .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
                 .For(0)
                 .Finalize(x =>
@@ -51,7 +51,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenExceptionThrownAndNoErrorRaisedAndDeconstructedTo3_ExpectNoErrors()
         {
-            var (_, _, errors) = _builder
+            var (_, _, _, errors) = _builder
                 .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
                 .For(0)
                 .Finalize(x =>
@@ -68,12 +68,12 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenExceptionNotThrownAndNoErrors_ExpectValidResult()
         {
-            var (result, _) = _builder
+            var (failed, _, _) = _builder
                 .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
                 .For(0)
                 .Finalize(x => x)
                 .Sink();
-            Assert.False(result.Failed);
+            Assert.False(failed);
         }
     }
 }

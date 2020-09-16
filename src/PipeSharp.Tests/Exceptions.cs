@@ -17,7 +17,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, _, exception, _) = _builder
                 .For(default(int))
                 .Finalize(x =>
                 {
@@ -45,7 +45,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, _, exception, _) = _builder
                 .For(default(int))
                 .Finalize(x => x)
                 .Project(x =>
@@ -63,7 +63,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenValidateThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_ ,_ , exception, _) = _builder
                 .For(default(int))
                 .Check(x =>
                 {
@@ -81,7 +81,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var (_, _, exception, _) = _builder
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
@@ -100,7 +100,7 @@ namespace PipeSharp.Tests
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_DefaultResultReturned()
         {
-            var (summary, _, _) = _builder
+            var (_, value, _, _) = _builder
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
@@ -113,7 +113,7 @@ namespace PipeSharp.Tests
                 .Finalize(x => true)
                 .Sink();
 
-            Assert.False(summary.Value);
+            Assert.False(value);
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInApplyMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (_, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x =>
@@ -162,7 +162,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInFinalizeMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
@@ -183,7 +183,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInProjectMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
@@ -205,7 +205,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInRaiseMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            var (summary, _, _) = _builder
+            _builder
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .EnableEventSubscription(new TestingSubscription(() => { }, () => { }))
                 .For(default(int))

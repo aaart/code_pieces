@@ -23,7 +23,7 @@ namespace PipeSharp.Internal
             {
                 summary.Exception = state.Exception;
                 summary.Errors = state.FilteringErrors.ToArray();
-                summary.Result = state.Invalid || state.Broken ? Result.FailedResult() : Result.SuccessResult();
+                summary.Failed = state.Invalid || state.Broken;
                 summary.ExceptionToErrorMappers = _exceptionToErrorMappers;
             });
     }
@@ -49,7 +49,8 @@ namespace PipeSharp.Internal
             {
                 summary.Exception = state.Exception;
                 summary.Errors = state.FilteringErrors.ToArray();
-                summary.Result = state.Invalid || state.Broken ? Result<T>.FailedResult() : Result<T>.SuccessResult(state.StepResult);
+                summary.Failed = state.Invalid || state.Broken;
+                summary.Value = state.StepResult;
                 summary.ExceptionToErrorMappers = _exceptionToErrorMappers;
             });
 

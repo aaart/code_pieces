@@ -6,19 +6,19 @@ namespace PipeSharp.Internal
 {
     public class PipelineSummary<TError> : IPipelineSummary<TError>
     {
-        public IResult Result { get; set; }
+        public bool Failed { get; set; }
         public Exception Exception { get; set; }
         public TError[] Errors { get; set; }
         public IEnumerable<Func<Exception, TError>> ExceptionToErrorMappers { get; set; }
-        public void Deconstruct(out IResult result, out TError[] errors)
+        public void Deconstruct(out bool failed, out TError[] errors)
         {
-            result = Result;
+            failed = Failed;
             errors = Exception != null ? Errors.Union(ExceptionToErrorMappers.Select(m => m(Exception))).ToArray() : Errors;
         }
 
-        public void Deconstruct(out IResult result, out Exception exception, out TError[] errors)
+        public void Deconstruct(out bool failed, out Exception exception, out TError[] errors)
         {
-            result = Result;
+            failed = Failed;
             exception = Exception;
             errors = Errors;
         }
@@ -26,16 +26,19 @@ namespace PipeSharp.Internal
 
     public class PipelineSummary<T, TError> : PipelineSummary<TError>, IPipelineSummary<T, TError>
     {
-        public new IResult<T> Result { get; set; }
-        public void Deconstruct(out IResult<T> result, out TError[] errors)
+        public T Value { get; set; }
+
+        public void Deconstruct(out bool failed, out T value, out TError[] errors)
         {
-            result = Result;
+            failed = Failed;
+            value = Value;
             errors = Exception != null ? Errors.Union(ExceptionToErrorMappers.Select(m => m(Exception))).ToArray() : Errors;
         }
 
-        public void Deconstruct(out IResult<T> result, out Exception exception, out TError[] errors)
+        public void Deconstruct(out bool failed, out T value, out Exception exception, out TError[] errors)
         {
-            result = Result;
+            failed = Failed;
+            value = Value;
             exception = Exception;
             errors = Errors;
         }

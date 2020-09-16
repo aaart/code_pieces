@@ -248,23 +248,23 @@ namespace PipeSharp.Tests
         [Fact]
         public void Flow_WhenCheckingFails_ExpectFailedResult1()
         {
-            var (res, _, _) = _builder
+            var (failed,_ , _, _) = _builder
                 .For(new TestingInput())
                 .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x => x)
                 .Sink();
-            Assert.True(res.Failed);
+            Assert.True(failed);
         }
         
         [Fact]
         public void Flow_WhenCheckingFails_ExpectFailedResult2()
         {
-            var (res, _, _) = _builder
+            var (failed, _, _) = _builder
                 .For(new TestingInput())
                 .Check(x => false, () => new TestingFilteringError())
                 .Finalize(x => { })
                 .Sink();
-            Assert.True(res.Failed);
+            Assert.True(failed);
         }
 
         [Fact]

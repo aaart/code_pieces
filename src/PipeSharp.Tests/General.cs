@@ -60,7 +60,7 @@ namespace PipeSharp.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
         {
             int count = 0;
-            var (result, _, _) = _preDefined
+            var (result, value, _, _) = _preDefined
                 .For(new { })
                 .Check(x =>
                 {
@@ -94,90 +94,90 @@ namespace PipeSharp.Tests
                 .Finalize(x => count + 1)
                 .Project(x => x + 1)
                 .Sink();
-            Assert.Equal(8, result.Value);
+            Assert.Equal(8, value);
         }
 
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var (result, _, _) = _preDefined
+            var (failed, _, _) = _preDefined
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.False(result.Failed);
+            Assert.False(failed);
         }
 
         [Fact]
         public void DefultInt_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithIntDefaultResult()
         {
             var input = default(int);
-            var (result, _, _) = _preDefined
+            var (_, value, _, _) = _preDefined
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, result.Value);
+            Assert.Equal(input, value);
         }
 
         [Fact]
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
             var input = 1;
-            var (result, _, _) = _preDefined
+            var (_,value , _, _) = _preDefined
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, result.Value);
+            Assert.Equal(input, value);
         }
 
         [Fact]
         public void DefaultIntAppliedOne_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 1;
-            var (result, _, _) = _preDefined
+            var (_, value, _, _) = _preDefined
                 .For(0)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Value);
+            Assert.Equal(applied, value);
         }
 
         [Fact]
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 2;
-            var (result, _, _) = _preDefined
+            var (_, value, _, _) = _preDefined
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Value);
+            Assert.Equal(applied, value);
         }
 
         [Fact]
         public void DefaultIn_WhenApplicationChangesType_ExpectSuccessWithEmptyString()
         {
             var applied = string.Empty;
-            var (result, _, _) = _preDefined
+            var (_, value, _, _) = _preDefined
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, result.Value);
+            Assert.Equal(applied, value);
         }
 
         [Fact]
         public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
         {
-            var (result, _, _) = _preDefined
+            var (_, value, _, _) = _preDefined
                 .For(0)
                 .Apply(x => x + 2)
                 .Apply(x => x.ToString())
                 .Apply(x => x.ToString() + "1")
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal("21", result.Value);
+            Assert.Equal("21", value);
         }
     }
 }
