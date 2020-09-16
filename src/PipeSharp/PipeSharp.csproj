@@ -9,9 +9,10 @@
     <RepositoryType>GIT</RepositoryType>
     <Description>A package that wraps your logic into flow-like structure.
 More information on my github: https://github.com/aaart/pipesharp</Description>
-    <AssemblyVersion>3.1.0.0</AssemblyVersion>
-    <FileVersion>3.1.0.0</FileVersion>
-    <PackageVersion>3.1.0</PackageVersion>
+    <AssemblyVersion>4.0.0.0-preview1</AssemblyVersion>
+    <FileVersion>4.0.0.0-preview1</FileVersion>
+    <PackageVersion>4.0.0-preview1</PackageVersion>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
