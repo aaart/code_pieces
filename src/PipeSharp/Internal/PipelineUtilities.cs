@@ -75,12 +75,12 @@ namespace PipeSharp.Internal
             }
         }
 
-        public static TPipelineResult Sink<TPipelineResult, TState, TError>(this TState state, Action<TPipelineResult, TState> setup = null)
-            where TPipelineResult : IPipelineSummary<TError>, new()
+        public static TPipelineSummary Sink<TPipelineSummary, TState, TError>(this TState state, Action<TPipelineSummary, TState> setup = null)
+            where TPipelineSummary : IPipelineSummary<TError>, new()
             where TState : IState<TError>
         {
             state.LogDebug("All steps executed. Building result object");
-            var result = new TPipelineResult();
+            var result = new TPipelineSummary();
             setup?.Invoke(result, state);
             state.Done();
             return result;
