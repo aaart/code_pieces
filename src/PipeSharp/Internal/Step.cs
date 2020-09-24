@@ -44,7 +44,7 @@ namespace PipeSharp.Internal
             }, () => { }, () => { }, _exceptionHandler));
 
         public IPipeline<TError> Finalize(Action<T> execution) => 
-            new Pipeline<TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler, _exceptionToErrorMappers);
+            new Pipeline<TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionToErrorMappers);
 
         public IProjectablePipeline<TR, TError> Finalize<TR>(Func<T, TR> execution) => 
             new Pipeline<TR, TError>(() => _method.Decorate(state => execution(state.StepResult), _onDoing, _onDone, _exceptionHandler), _exceptionHandler, _exceptionToErrorMappers);

@@ -8,13 +8,13 @@ namespace PipeSharp.Internal
     public class Pipeline<TError> : IPipeline<TError>
     {
         private readonly Func<IState<TError>> _method;
-        private readonly Action<Exception, ILogger> _exceptionHandler;
+        //private readonly Action<Exception, ILogger> _exceptionHandler;
         private readonly IEnumerable<Func<Exception, TError>> _exceptionToErrorMappers;
         
-        internal Pipeline(Func<IState<TError>> method, Action<Exception, ILogger> exceptionHandler, IEnumerable<Func<Exception, TError>> exceptionToErrorMappers)
+        internal Pipeline(Func<IState<TError>> method, IEnumerable<Func<Exception, TError>> exceptionToErrorMappers)
         {
             _method = method;
-            _exceptionHandler = exceptionHandler;
+            //_exceptionHandler = exceptionHandler;
             _exceptionToErrorMappers = exceptionToErrorMappers;
         }
 
