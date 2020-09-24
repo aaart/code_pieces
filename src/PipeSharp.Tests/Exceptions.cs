@@ -6,18 +6,12 @@ namespace PipeSharp.Tests
 {
     public class Exceptions
     {
-        private readonly IFlowBuilder<TestingFilteringError> _builder;
-
-        public Exceptions()
-        {
-            _builder = new StandardBuilder()
-                .UseErrorType<TestingFilteringError>();
-        }
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
 
         [Fact]
         public void StandardFlow_WhenFinalize1ThrowsException_ExceptionReturned()
         {
-            var (_, _, exception, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Finalize(x =>
                 {
@@ -28,24 +22,24 @@ namespace PipeSharp.Tests
                 })
                 .Sink();
 
-            Assert.NotNull(exception);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void StandardFlow_WhenFinalize2ThrowsException_ExceptionReturned()
         {
-            var (_, exception, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Finalize(x => throw new Exception())
                 .Sink();
 
-            Assert.NotNull(exception);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void StandardFlow_WhenProjectThrowsException_ExceptionReturned()
         {
-            var (_, _, exception, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Finalize(x => x)
                 .Project(x =>
@@ -57,13 +51,13 @@ namespace PipeSharp.Tests
                 })
                 .Sink();
 
-            Assert.NotNull(exception);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void StandardFlow_WhenValidateThrowsException_ExceptionReturned()
         {
-            var (_ ,_ , exception, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Check(x =>
                 {
@@ -71,17 +65,17 @@ namespace PipeSharp.Tests
 #pragma warning disable 162
                     return true;
 #pragma warning restore 162
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Finalize(x => x)
                 .Sink();
 
-            Assert.NotNull(exception);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_ExceptionReturned()
         {
-            var (_, _, exception, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
@@ -90,17 +84,17 @@ namespace PipeSharp.Tests
 #pragma warning disable 162
                     return true;
 #pragma warning restore 162
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Finalize(x => x)
                 .Sink();
 
-            Assert.NotNull(exception);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void StandardFlow_WhenVerifyThrowsException_DefaultResultReturned()
         {
-            var (_, value, _, _) = _builder
+            var summary = _predefinedFlow
                 .For(default(int))
                 .Apply(x => x)
                 .Check(x =>
@@ -109,18 +103,18 @@ namespace PipeSharp.Tests
 #pragma warning disable 162
                     return true;
 #pragma warning restore 162
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Finalize(x => true)
                 .Sink();
 
-            Assert.False(value);
+            Assert.False(summary.Value);
         }
 
         [Fact]
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInCheckMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
@@ -130,7 +124,7 @@ namespace PipeSharp.Tests
 #pragma warning disable 162
                     return true;
 #pragma warning restore 162
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Finalize(x => true)
                 .Sink();
 
@@ -141,7 +135,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInApplyMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x =>
@@ -151,7 +145,7 @@ namespace PipeSharp.Tests
                     return x;
 #pragma warning restore 162
                 })
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x => true)
                 .Sink();
 
@@ -162,11 +156,11 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInFinalizeMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x =>
                 {
                     throw new Exception();
@@ -183,11 +177,11 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInProjectMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x => true)
                 .Project(x =>
                 {
@@ -205,7 +199,7 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionThrownInRaiseMethod_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .EnableEventSubscription(new TestingSubscription(() => { }, () => { }))
                 .For(default(int))
@@ -218,7 +212,7 @@ namespace PipeSharp.Tests
                 })
                 .Apply(x => x)
                 
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x => true)
                 .Project(x => x)
                 .Sink();
@@ -230,11 +224,11 @@ namespace PipeSharp.Tests
         public void StandardFlow_WhenExceptionHandlerDefinedAndExceptionNotThrown_HandlerExecuted()
         {
             bool exceptionHandled = false;
-            _builder
+            _predefinedFlow
                 .HandleException((ex, logger) => exceptionHandled = true)
                 .For(default(int))
                 .Apply(x => x)
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x => true)
                 .Project(x => x)
                 .Sink();

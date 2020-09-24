@@ -5,25 +5,19 @@ namespace PipeSharp.Tests
 {
     public class General
     {
-        private readonly IFlowBuilder<TestingFilteringError> _preDefined;
-
-        public General()
-        {
-            _preDefined = new StandardBuilder()
-                .UseErrorType<TestingFilteringError>();
-        }
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
 
         [Fact]
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount()
         {
             int count = 0;
-            _preDefined
+            _predefinedFlow
                 .For(new { })
                 .Check(x =>
                 {
                     count++;
                     return count == 1;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Apply(x =>
                 {
                     count++;
@@ -33,7 +27,7 @@ namespace PipeSharp.Tests
                 {
                     count++;
                     return count == 3;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Check(x =>
                 {
                     count++;
@@ -42,7 +36,7 @@ namespace PipeSharp.Tests
                 {
                     count++;
                     return count == 5;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Apply(x =>
                 {
                     count++;
@@ -60,13 +54,13 @@ namespace PipeSharp.Tests
         public void InputDoesMatter_WhenNoErrorsOccur_ExpectValidExecutionCount2()
         {
             int count = 0;
-            var (result, value, _, _) = _preDefined
+            var (value, _) = _predefinedFlow
                 .For(new { })
                 .Check(x =>
                 {
                     count++;
                     return true;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Apply(x =>
                 {
                     count++;
@@ -76,7 +70,7 @@ namespace PipeSharp.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Check(x =>
                 {
                     count++;
@@ -85,7 +79,7 @@ namespace PipeSharp.Tests
                 {
                     count++;
                     return true;
-                }, () => new TestingFilteringError())
+                }, () => new TestError())
                 .Apply(x =>
                 {
                     count++;
@@ -100,84 +94,84 @@ namespace PipeSharp.Tests
         [Fact]
         public void MockeryInput_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNoValueResult()
         {
-            var (failed, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(new { Msg = "Mockery" })
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.False(failed);
+            Assert.Empty(summary.Errors);
         }
 
         [Fact]
         public void DefultInt_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithIntDefaultResult()
         {
             var input = default(int);
-            var (_, value, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, value);
+            Assert.Equal(input, summary.Value);
         }
 
         [Fact]
         public void One_WhenNoFiltersAndModificationsApplied_ExpectSuccessWithNumberOneResult()
         {
             var input = 1;
-            var (_,value , _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(input)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(input, value);
+            Assert.Equal(input, summary.Value);
         }
 
         [Fact]
         public void DefaultIntAppliedOne_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 1;
-            var (_, value, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(0)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, value);
+            Assert.Equal(applied, summary.Value);
         }
 
         [Fact]
         public void DefaultIntAppliedOneAndTwo_WhenNoFiltersAppliedButModificationsApplied_ExpectSuccessWithNumberOnResult()
         {
             var applied = 2;
-            var (_, value, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, value);
+            Assert.Equal(applied, summary.Value);
         }
 
         [Fact]
         public void DefaultIn_WhenApplicationChangesType_ExpectSuccessWithEmptyString()
         {
             var applied = string.Empty;
-            var (_, value, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(0)
                 .Apply(x => 1)
                 .Apply(x => applied)
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal(applied, value);
+            Assert.Equal(applied, summary.Value);
         }
 
         [Fact]
-        public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWithEmptyString()
+        public void DefaultIn_WhenApplicationChangesType2_ExpectSuccessWith21String()
         {
-            var (_, value, _, _) = _preDefined
+            var summary = _predefinedFlow
                 .For(0)
                 .Apply(x => x + 2)
                 .Apply(x => x.ToString())
                 .Apply(x => x.ToString() + "1")
                 .Finalize(x => x)
                 .Sink();
-            Assert.Equal("21", value);
+            Assert.Equal("21", summary.Value);
         }
     }
 }

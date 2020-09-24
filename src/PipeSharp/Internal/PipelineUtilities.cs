@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace PipeSharp.Internal
@@ -82,6 +84,13 @@ namespace PipeSharp.Internal
             setup?.Invoke(result, state);
             state.Done();
             return result;
+        }
+        
+        public static TError[] MergeExceptionAndErrors<TError>(Exception exception, IEnumerable<Func<Exception, TError>> exceptionToErrorMappers, IEnumerable<TError> errors)
+        {
+            return exception != null
+                ? exceptionToErrorMappers.Select(m => m(exception)).Concat(errors).ToArray()
+                : errors.ToArray();
         }
     }
 }

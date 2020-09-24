@@ -3,109 +3,104 @@ using Xunit;
 
 namespace PipeSharp.Tests
 {
-    public partial class Filtering
+    public class Checking
     {
 
-        private readonly IFlowBuilder<TestingFilteringError> _builder;
-
-        public Filtering()
-        {
-            _builder = new StandardBuilder().UseErrorType<TestingFilteringError>();
-        }
+        private readonly IFlowBuilder<TestError> _predeFlow = Predefined.Flow;
 
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Single(filteringErrors);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult2()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x => false)
                 .Sink();
-            Assert.Single(filteringErrors);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void Flow_WhenValidationFails_ExpectSingleErrorInResult3()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x => false)
                 .Project(x => 1)
                 .Sink();
-            Assert.Single(filteringErrors);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void Flow_WhenVerificationFails_ExpectSingleErrorInResult()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Single(filteringErrors);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
-        public void Flow_WhenVerificationFailsTwice_ExpectTwoErrorsinResult()
+        public void Flow_WhenVerificationFailsTwice_ExpectTwoErrorsInResult()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Check(x => false, () => new TestingFilteringError())
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
+                .Check(x => false, () => new TestError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(2, filteringErrors.Length);
+            Assert.Equal(2, summary.Errors.Length);
         }
         
         [Fact]
-        public void Flow_WhenValidationFailsTwice_ExpectTwoErrorsinResult()
+        public void Flow_WhenValidationFailsTwice_ExpectTwoErrorsInResult()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
+                .Check(x => false, () => new TestError())
                 .Apply(x => x)
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(2, filteringErrors.Length);
+            Assert.Equal(2, summary.Errors.Length);
         }
         
         [Fact]
-        public void Flow_WhenValidationFailsTwiceAndVerificationFails_ExpectTwoErrorsinResult()
+        public void Flow_WhenValidationFailsTwiceAndVerificationFails_ExpectTwoErrorsInResult()
         {
-            var (_, _, filteringErrors) = _builder
+            var summary = _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
+                .Check(x => false, () => new TestError())
                 .Apply(x => x)
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(Predefined.EmptyMethod)
                 .Sink();
-            Assert.Equal(2, filteringErrors.Length);
+            Assert.Equal(2, summary.Errors.Length);
         }
 
         [Fact]
         public void Flow_WhenValidationFails_PipelineStopped()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -118,9 +113,9 @@ namespace PipeSharp.Tests
         public void Flow_WhenValidationFails_PipelineStopped2()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
-                .Check(x => x, x => false, () => new TestingFilteringError())
+                .Check(x => x, x => false, () => new TestError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -134,7 +129,7 @@ namespace PipeSharp.Tests
         public void Flow_WhenValidationFails_PipelineStopped3()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Check(x => new TestingInput(), new TestingFilter())
                 .Finalize(x =>
@@ -150,7 +145,7 @@ namespace PipeSharp.Tests
         public void Flow_WhenValidationFails_PipelineStopped4()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new TestingInput())
                 .Check(new TestingFilter())
                 .Finalize(x =>
@@ -166,9 +161,9 @@ namespace PipeSharp.Tests
         public void Flow_WhenValidationChangesTarget_ExpectFinalizeExecuted()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Prop = true })
-                .Check(x => x.Prop, x => x, () => new TestingFilteringError())
+                .Check(x => x.Prop, x => x, () => new TestError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -181,10 +176,10 @@ namespace PipeSharp.Tests
         public void Flow_WhenVerificationFails_PipelineStopped()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -198,10 +193,10 @@ namespace PipeSharp.Tests
         public void Flow_WhenVerificationFails_PipelineStopped2()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
-                .Check(x => x.Msg, x => false, () => new TestingFilteringError())
+                .Check(x => x.Msg, x => false, () => new TestError())
                 .Finalize(x =>
                 {
                     executed = true;
@@ -215,7 +210,7 @@ namespace PipeSharp.Tests
         public void Flow_WhenVerificationFails_PipelineStopped3()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new { Msg = "Mockery" })
                 .Apply(x => x)
                 .Check(x => new TestingInput(), new TestingFilter())
@@ -232,7 +227,7 @@ namespace PipeSharp.Tests
         public void Flow_WhenVerificationFails_PipelineStopped4()
         {
             bool executed = false;
-            _builder
+            _predeFlow
                 .For(new TestingInput())
                 .Apply(x => x)
                 .Check(new TestingFilter())
@@ -246,47 +241,25 @@ namespace PipeSharp.Tests
         }
 
         [Fact]
-        public void Flow_WhenCheckingFails_ExpectFailedResult1()
-        {
-            var (failed,_ , _, _) = _builder
-                .For(new TestingInput())
-                .Check(x => false, () => new TestingFilteringError())
-                .Finalize(x => x)
-                .Sink();
-            Assert.True(failed);
-        }
-        
-        [Fact]
-        public void Flow_WhenCheckingFails_ExpectFailedResult2()
-        {
-            var (failed, _, _) = _builder
-                .For(new TestingInput())
-                .Check(x => false, () => new TestingFilteringError())
-                .Finalize(x => { })
-                .Sink();
-            Assert.True(failed);
-        }
-
-        [Fact]
         public void Flow_WhenCheckingFails_ExpectNullException1()
         {
-            var (_, ex, _) = _builder
+            var summary = _predeFlow
                 .For(new TestingInput())
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x => x)
                 .Sink();
-            Assert.Null(ex);
+            Assert.Single(summary.Errors);
         }
 
         [Fact]
         public void Flow_WhenCheckingFails_ExpectNullException2()
         {
-            var (_, ex, _) = _builder
+            var summary = _predeFlow
                 .For(new TestingInput())
-                .Check(x => false, () => new TestingFilteringError())
+                .Check(x => false, () => new TestError())
                 .Finalize(x => { })
                 .Sink();
-            Assert.Null(ex);
+            Assert.Single(summary.Errors);
         }
     }
 }

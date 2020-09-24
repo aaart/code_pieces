@@ -6,18 +6,12 @@ namespace PipeSharp.Tests
 {
     public class StandardBuilderTests
     {
-        private readonly IFlowBuilder<TestingFilteringError> _builder;
-
-        public StandardBuilderTests()
-        {
-            _builder = new StandardBuilder()
-                .UseErrorType<TestingFilteringError>();
-        }
-
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
+        
         [Fact]
         public void NewPipelineBuilder_ExpectPipelineReturned()
         {
-            Assert.NotNull(_builder.For(new object()));
+            Assert.NotNull(_predefinedFlow.For(new object()));
         }
     }
 }

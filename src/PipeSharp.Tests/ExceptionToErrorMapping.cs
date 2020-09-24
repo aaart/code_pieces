@@ -6,19 +6,20 @@ namespace PipeSharp.Tests
 {
     public class ExceptionToErrorMapping
     {
-        private readonly IFlowBuilder<TestingFilteringError> _builder;
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
 
-        public ExceptionToErrorMapping()
+        [Fact]
+        public void StandardFloe_WhenNullErrorMapperProvided_ExpectException()
         {
-            _builder = new StandardBuilder()
-                .UseErrorType<TestingFilteringError>();
-        }
+            // predefined flow not used intentionally
+            Assert.Throws<ArgumentNullException>(() => new StandardBuilder().UseErrorType<TestError>(null));
 
+        }
+        
         [Fact]
         public void StandardFlow_WhenExceptionThrownAndNoErrorRaisedAndDeconstructedTo2_ExpectSingleError()
         {
-            var (_, errors) = _builder
-                .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
+            var (_, errors) = _predefinedFlow
                 .For(0)
                 .Finalize(x =>
                 {
@@ -30,50 +31,15 @@ namespace PipeSharp.Tests
                 .Sink();
             Assert.Single(errors);
         }
-        
-        [Fact]
-        public void StandardFlow_WhenExceptionThrownAndNoErrorRaisedAndDeconstructedTo3_ExpectException()
-        {
-            var (_, _, exception, _) = _builder
-                .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
-                .For(0)
-                .Finalize(x =>
-                {
-                    throw new Exception();
-#pragma warning disable 162
-                    return x;
-#pragma warning restore 162
-                })
-                .Sink();
-            Assert.NotNull(exception);
-        }
-        
-        [Fact]
-        public void StandardFlow_WhenExceptionThrownAndNoErrorRaisedAndDeconstructedTo3_ExpectNoErrors()
-        {
-            var (_, _, _, errors) = _builder
-                .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
-                .For(0)
-                .Finalize(x =>
-                {
-                    throw new Exception();
-#pragma warning disable 162
-                    return x;
-#pragma warning restore 162
-                })
-                .Sink();
-            Assert.Empty(errors);
-        }
 
         [Fact]
         public void StandardFlow_WhenExceptionNotThrownAndNoErrors_ExpectValidResult()
         {
-            var (failed, _, _) = _builder
-                .MapExceptionToErrorOnDeconstruct(ex => new TestingFilteringError {Message = ex.Message, Code = ex.HResult})
+            var summary = _predefinedFlow
                 .For(0)
                 .Finalize(x => x)
                 .Sink();
-            Assert.False(failed);
+            Assert.Empty(summary.Errors);
         }
     }
 }

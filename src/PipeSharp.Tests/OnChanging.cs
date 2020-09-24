@@ -5,12 +5,13 @@ namespace PipeSharp.Tests
 {
     public class OnChanging
     {
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
+        
         [Fact]
         public void GivenFlow_WhenOnlyFinalizeDefined_ExpectSingleOnDoing()
         {
             int onDoingCount = 0;
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => {}))
                 .OnChanging(() => onDoingCount++)
@@ -24,8 +25,7 @@ namespace PipeSharp.Tests
         public void GivenFlow_WhenApplyAndFinalizeDefined_ExpectSingleOnDoing()
         {
             int onDoingCount = 0;
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => { }))
                 .OnChanging(() => onDoingCount++)
@@ -48,13 +48,12 @@ namespace PipeSharp.Tests
         public void GivenFlow_WhenCheckingDefined_ExpectSingleOnDoing()
         {
             int onDoingCount = 0;
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .OnChanging(() => onDoingCount++)
                 .EnableEventSubscription(new TestingSubscription(() => onDoingCount++, () => { }))
                 .OnChanging(() => onDoingCount++)
                 .For(default(int))
-                .Check(x => true, () => new TestingFilteringError())
+                .Check(x => true, () => new TestError())
                 .Finalize(x => { })
                 .Sink();
             Assert.Equal(2, onDoingCount);

@@ -7,6 +7,5 @@ namespace PipeSharp
     {
         new INotifyingFlow<T, TError> For<T>(T target);
         new IFlowBuilderWithEventSubscriptionEnabled<TError> HandleException(Action<Exception, ILogger> handler);
-        new IFlowBuilderWithEventSubscriptionEnabled<TError> MapExceptionToErrorOnDeconstruct(Func<Exception, TError> map);
     }
 }

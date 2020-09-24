@@ -5,13 +5,14 @@ namespace PipeSharp.Tests
 {
     public class Events
     {
+        private readonly IFlowBuilder<TestError> _predefinedFlow = Predefined.Flow;
+        
         [Fact]
         public void Flow_WhenTestingEventPublished_ExpectEventReceived1()
         {
             bool received = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
@@ -26,8 +27,7 @@ namespace PipeSharp.Tests
         {
             bool received = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
@@ -42,8 +42,7 @@ namespace PipeSharp.Tests
         {
             bool received = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => received = true, () => { }))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
@@ -59,8 +58,7 @@ namespace PipeSharp.Tests
         {
             bool disposed = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
@@ -75,8 +73,7 @@ namespace PipeSharp.Tests
         {
             bool disposed = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())
@@ -91,8 +88,7 @@ namespace PipeSharp.Tests
         {
             bool disposed = false;
 
-            new StandardBuilder()
-                .UseErrorType<TestingFilteringError>()
+            _predefinedFlow
                 .EnableEventSubscription(new TestingSubscription(() => { }, () => disposed = true))
                 .For(default(int))
                 .Raise(x => new TestingEvent())

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Logging;
+using static PipeSharp.Internal.PipelineUtilities;
 
 namespace PipeSharp.Internal
 {
@@ -21,11 +21,11 @@ namespace PipeSharp.Internal
         public IPipelineSummary<TError> Sink() =>
             _method().Sink<PipelineSummary<TError>, IState<TError>, TError>((summary, state) =>
             {
-                summary.Exception = state.Exception;
-                summary.Errors = state.FilteringErrors.ToArray();
-                summary.Failed = state.Invalid || state.Broken;
-                summary.ExceptionToErrorMappers = _exceptionToErrorMappers;
+                summary.Errors = MergeExceptionAndErrors(state.Exception, _exceptionToErrorMappers, state.FilteringErrors);
             });
+
+        
+
     }
 
     public class Pipeline<T, TError> : IProjectablePipeline<T, TError>
@@ -47,11 +47,8 @@ namespace PipeSharp.Internal
         public IPipelineSummary<T, TError> Sink() =>
             _method().Sink<PipelineSummary<T, TError>, IState<T, TError>, TError>((summary, state) =>
             {
-                summary.Exception = state.Exception;
-                summary.Errors = state.FilteringErrors.ToArray();
-                summary.Failed = state.Invalid || state.Broken;
+                summary.Errors = MergeExceptionAndErrors(state.Exception, _exceptionToErrorMappers, state.FilteringErrors);
                 summary.Value = state.StepResult;
-                summary.ExceptionToErrorMappers = _exceptionToErrorMappers;
             });
 
         IPipelineSummary<TError> IPipeline<TError>.Sink() => Sink();

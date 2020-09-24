@@ -1,10 +1,10 @@
 ﻿namespace PipeSharp.Tests.TestUtilities
 {
-    public class TestingFilter : IFilter<TestingInput, TestingFilteringError>
+    public class TestingFilter : IFilter<TestingInput, TestError>
     {
-        public bool Check(TestingInput target, out TestingFilteringError filteringError)
+        public bool Check(TestingInput target, out TestError filteringError)
         {
-            filteringError = new TestingFilteringError();
+            filteringError = new TestError();
             return false;
         }
     }
