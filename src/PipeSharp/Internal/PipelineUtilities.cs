@@ -80,6 +80,7 @@ namespace PipeSharp.Internal
             where TState : IState<TError>
         {
             state.LogDebug("All steps executed. Building result object");
+            // TODO: remove parameterless constructor and move setup method to Sink method (here).
             var result = new TPipelineSummary();
             setup?.Invoke(result, state);
             state.Done();
